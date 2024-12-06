@@ -1,0 +1,99 @@
+.profile-container {
+  @apply relative min-h-screen w-full flex flex-col items-center justify-start pt-12;
+  background: transparent;
+}
+
+.profile-content {
+  @apply relative z-10 w-full max-w-4xl mx-auto px-4 flex flex-col items-center;
+}
+
+.profile-header {
+  text-align: center;
+  margin-bottom: 3rem;
+  position: relative;
+  width: 100%;
+  max-width: 800px;
+  z-index: 1;
+}
+
+.profile-title {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: white;
+  margin-bottom: 0.5rem;
+  text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+.profile-subtitle {
+  font-size: 1.1rem;
+  color: #b8b8b8;
+  margin-bottom: 1.5rem;
+}
+
+.profile-card {
+  @apply relative w-full p-6 mb-4 rounded-xl;
+  background: rgba(17, 24, 39, 0.6);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.profile-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+}
+
+.stats-grid {
+  @apply grid grid-cols-1 md:grid-cols-2 gap-6;
+  width: 100%;
+  max-width: 800px;
+}
+
+.stat-item {
+  @apply flex items-center justify-between p-4 rounded-lg;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  min-height: 70px;
+}
+
+.stat-label {
+  @apply text-gray-300 text-lg;
+}
+
+.stat-value {
+  @apply text-white text-xl font-bold;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+}
+
+.stat-subvalue {
+  @apply text-sm text-gray-400 mt-1;
+  text-shadow: none;
+}
+
+.achievements-list {
+  @apply space-y-3;
+}
+
+.achievement-item {
+  @apply flex items-center gap-3 p-4 rounded-lg transition-all;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.achievement-item:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateX(5px);
+}
+
+.achievement-icon {
+  @apply text-2xl text-yellow-400;
+}
+
+.achievement-text {
+  @apply text-white text-lg;
+}
+
+.loading-spinner {
+  @apply animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-purple-500;
+}

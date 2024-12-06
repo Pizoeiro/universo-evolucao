@@ -1,0 +1,31 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Função auxiliar para verificar se o usuário está autenticado
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    // Função para verificar se o usuário está acessando seus próprios dados
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    // Regras para a coleção de jogadores
+    match /players/{userId} {
+      // Permite leitura pública para rankings
+      allow read: if true;
+      
+      // Apenas o próprio usuário pode criar/atualizar seus dados
+      allow create: if isAuthenticated() && request.auth.uid == userId;
+      allow update: if isOwner(userId);
+      
+      // Validação dos dados do jogador
+      allow write: if isOwner(userId) && 
+        request.resource.data.keys().hasAll(['username', 'email', 'levelProgress']) &&
+        request.resource.data.username is string &&
+        request.resource.data.email is string &&
+        request.resource.data.levelProgress is list;
+    }
+  }
+}

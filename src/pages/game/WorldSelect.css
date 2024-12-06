@@ -1,0 +1,476 @@
+/* Animações de órbita */
+@keyframes orbit {
+  from {
+    transform: rotate(0deg) translateX(var(--orbit-radius)) rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg) translateX(var(--orbit-radius)) rotate(-360deg);
+  }
+}
+
+/* Animação do sol pulsando */
+@keyframes solarPulse {
+  0% {
+    transform: scale(1);
+    opacity: 0.9;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0.9;
+  }
+}
+
+/* Animação do brilho do sol */
+@keyframes solarGlow {
+  0% {
+    box-shadow: 0 0 40px rgba(0, 188, 212, 0.6),
+                0 0 80px rgba(0, 188, 212, 0.3),
+                0 0 120px rgba(0, 188, 212, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 60px rgba(0, 188, 212, 0.7),
+                0 0 100px rgba(0, 188, 212, 0.4),
+                0 0 140px rgba(0, 188, 212, 0.3);
+  }
+  100% {
+    box-shadow: 0 0 40px rgba(0, 188, 212, 0.6),
+                0 0 80px rgba(0, 188, 212, 0.3),
+                0 0 120px rgba(0, 188, 212, 0.2);
+  }
+}
+
+/* Animação de partículas cósmicas */
+@keyframes float {
+  0%, 100% { transform: translateY(0) translateX(0); }
+  25% { transform: translateY(-5px) translateX(5px); }
+  50% { transform: translateY(5px) translateX(-5px); }
+  75% { transform: translateY(-3px) translateX(-3px); }
+}
+
+/* Animação de órbita suave */
+@keyframes orbitGlow {
+  0% {
+    box-shadow: 0 0 20px rgba(0, 188, 212, 0.1);
+    border-color: rgba(0, 188, 212, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 25px rgba(0, 188, 212, 0.2);
+    border-color: rgba(0, 188, 212, 0.3);
+  }
+  100% {
+    box-shadow: 0 0 20px rgba(0, 188, 212, 0.1);
+    border-color: rgba(0, 188, 212, 0.2);
+  }
+}
+
+/* Animação do Nexus */
+@keyframes nexusPulse {
+  0% {
+    transform: scale(1);
+    opacity: 0.5;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 0.2;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0.5;
+  }
+}
+
+@keyframes nexusRing {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Animação do painel de controle */
+@keyframes controlPanelGlow {
+  0% {
+    box-shadow: 0 0 20px rgba(0, 188, 212, 0.1);
+    border-color: rgba(0, 188, 212, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(0, 188, 212, 0.2),
+                0 0 50px rgba(0, 188, 212, 0.1);
+    border-color: rgba(0, 188, 212, 0.5);
+  }
+  100% {
+    box-shadow: 0 0 20px rgba(0, 188, 212, 0.1);
+    border-color: rgba(0, 188, 212, 0.3);
+  }
+}
+
+/* Animação para textos holográficos */
+@keyframes holographicText {
+  0% {
+    text-shadow: 0 0 10px rgba(0, 188, 212, 0.5),
+                 0 0 20px rgba(0, 188, 212, 0.3);
+  }
+  50% {
+    text-shadow: 0 0 15px rgba(0, 188, 212, 0.7),
+                 0 0 25px rgba(0, 188, 212, 0.5);
+  }
+  100% {
+    text-shadow: 0 0 10px rgba(0, 188, 212, 0.5),
+                 0 0 20px rgba(0, 188, 212, 0.3);
+  }
+}
+
+/* Efeito de scanner */
+@keyframes scanline {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(100%);
+  }
+}
+
+/* Container do Sistema Solar */
+.solar-system {
+  position: relative;
+  width: 550px;
+  height: 550px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  transform-origin: center center;
+}
+
+.sun-container {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform-origin: center center;
+}
+
+.nexus-sun {
+  width: 80px;
+  height: 80px;
+  background: linear-gradient(135deg, #00bcd4, #03a9f4);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 60px rgba(0, 188, 212, 0.6),
+              0 0 100px rgba(0, 188, 212, 0.3),
+              0 0 140px rgba(0, 188, 212, 0.2);
+  cursor: pointer;
+  position: relative;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(5px);
+  transform-origin: center center;
+  will-change: transform;
+}
+
+.nexus-sun::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(135deg, #00bcd4, #03a9f4);
+  border-radius: 50%;
+  z-index: -1;
+  opacity: 0.5;
+  animation: nexusPulse 4s ease-in-out infinite;
+}
+
+.nexus-sun::after {
+  content: '';
+  position: absolute;
+  top: -15px;
+  left: -15px;
+  right: -15px;
+  bottom: -15px;
+  border: 2px solid rgba(0, 188, 212, 0.2);
+  border-radius: 50%;
+  animation: nexusRing 8s linear infinite;
+}
+
+.star-tooltip {
+  position: absolute;
+  top: -40px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.8);
+  border: 1px solid rgba(0, 188, 212, 0.3);
+  color: white;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 14px;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.2s ease-in-out;
+  backdrop-filter: blur(5px);
+}
+
+.star-tooltip::after {
+  content: '';
+  position: absolute;
+  bottom: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 6px 6px 0;
+  border-style: solid;
+  border-color: rgba(0, 0, 0, 0.8) transparent transparent;
+}
+
+.sun:hover .star-tooltip {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(-5px);
+}
+
+/* Órbitas */
+.orbit {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  transform-origin: 0 0;
+}
+
+/* Órbitas visíveis */
+.orbit-path {
+  position: absolute;
+  border: 1px solid rgba(0, 188, 212, 0.2);
+  border-radius: 50%;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 20px rgba(0, 188, 212, 0.1);
+  transition: all 0.3s ease-in-out;
+  animation: orbitGlow 4s ease-in-out infinite;
+}
+
+/* Planetas */
+.planet {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  width: 35px;
+  height: 35px;
+  transition: all 0.3s ease-in-out;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  backdrop-filter: blur(5px);
+  box-shadow: 0 0 20px rgba(0, 188, 212, 0.1);
+  will-change: transform;
+}
+
+.planet:hover {
+  transform: translate(-50%, -50%) scale(1.2);
+  filter: brightness(1.3);
+  z-index: 100;
+  box-shadow: 0 0 30px rgba(0, 188, 212, 0.4),
+              0 0 50px rgba(0, 188, 212, 0.2);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.planet.locked {
+  filter: grayscale(1) brightness(0.3);
+  border: 2px solid rgba(255, 255, 255, 0.05);
+  box-shadow: none;
+}
+
+.planet.locked:hover {
+  filter: grayscale(0.8) brightness(0.5);
+  transform: translate(-50%, -50%) scale(1.1);
+  box-shadow: 0 0 15px rgba(255, 0, 0, 0.2);
+}
+
+.planet:not(.locked)::after {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: inherit;
+  border-radius: 50%;
+  filter: blur(4px);
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.planet:not(.locked):hover::after {
+  opacity: 0.5;
+}
+
+/* Cards de Informação */
+.info-card {
+  opacity: 0;
+  visibility: hidden;
+  position: absolute;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(0, 188, 212, 0.3);
+  border-radius: 8px;
+  padding: 12px;
+  width: 200px;
+  transform: translateY(10px);
+  transition: all 0.3s ease-in-out;
+  z-index: 1000;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.planet:hover .info-card {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+/* Estrelas */
+.star {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  background: white;
+  border-radius: 50%;
+  animation: float 8s ease-in-out infinite;
+}
+
+.star::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: inherit;
+  border-radius: inherit;
+  filter: blur(1px);
+}
+
+/* Custom Scrollbar */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 3px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: linear-gradient(to bottom, #00bcd4, #03a9f4);
+  border-radius: 3px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(to bottom, #00acc1, #0288d1);
+}
+
+/* Painel de Controle */
+.control-panel {
+  animation: controlPanelGlow 3s infinite;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(0, 188, 212, 0.3);
+  background: linear-gradient(
+    135deg,
+    rgba(0, 0, 0, 0.8) 0%,
+    rgba(0, 30, 60, 0.8) 100%
+  );
+}
+
+/* Texto Holográfico */
+.holographic-text {
+  animation: holographicText 2s infinite;
+  font-family: 'Orbitron', sans-serif;
+}
+
+/* Efeito de Scanner */
+.scanner-effect::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(
+    to right,
+    transparent,
+    rgba(0, 188, 212, 0.5),
+    transparent
+  );
+  animation: scanline 3s linear infinite;
+}
+
+/* Responsividade */
+@media (max-width: 1024px) {
+  .solar-system {
+    width: 500px;
+    height: 500px;
+    transform: scale(0.9);
+  }
+}
+
+@media (max-width: 768px) {
+  .solar-system {
+    width: 450px;
+    height: 450px;
+    transform: scale(0.85);
+  }
+  
+  .info-card {
+    width: 140px;
+    font-size: 0.85em;
+  }
+
+  /* Ajuste para layout mobile */
+  .relative.flex {
+    flex-direction: column;
+  }
+
+  [class*="w-[25vw]"] {
+    width: 100% !important;
+    height: auto;
+    min-height: 40vh;
+  }
+
+  [class*="text-[2.5vh]"] {
+    font-size: 1.5rem;
+  }
+
+  [class*="text-[3vh]"] {
+    font-size: 1.8rem;
+  }
+
+  [class*="text-[2vh]"] {
+    font-size: 1.2rem;
+  }
+
+  [class*="text-[1.8vh]"] {
+    font-size: 1rem;
+  }
+
+  [class*="text-[1.7vh]"] {
+    font-size: 0.9rem;
+  }
+
+  [class*="text-[1.6vh]"] {
+    font-size: 0.85rem;
+  }
+
+  [class*="text-[1.5vh]"] {
+    font-size: 0.8rem;
+  }
+}

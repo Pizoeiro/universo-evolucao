@@ -1,0 +1,196 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    @apply antialiased;
+  }
+
+  body {
+    @apply m-0 min-h-screen text-white font-sans overflow-x-hidden;
+  }
+
+  #root {
+    @apply min-h-screen;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply px-4 py-2 bg-game-primary text-white rounded-lg 
+           hover:bg-game-primary/90 transition-colors 
+           disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-secondary {
+    @apply px-4 py-2 border border-game-primary/20 text-game-primary rounded-lg 
+           hover:border-game-primary/40 transition-colors;
+  }
+
+  .input-primary {
+    @apply w-full px-4 py-2 rounded-lg bg-game-dark/50 
+           border border-game-primary/20 text-white 
+           placeholder-game-primary/40 focus:outline-none 
+           focus:border-game-primary/60;
+  }
+
+  .card-primary {
+    @apply bg-game-dark/80 backdrop-blur-lg rounded-2xl p-8 
+           border border-game-primary/20 shadow-xl 
+           hover:border-game-primary/40 transition-all;
+  }
+
+  .cosmic-particle {
+    position: fixed;
+    width: 2px;
+    height: 2px;
+    background: rgba(255, 255, 255, 0.5);
+    box-shadow: 0 0 4px rgba(255, 255, 255, 0.4);
+    pointer-events: none;
+    border-radius: 50%;
+    animation: moveParticle 45s infinite linear;
+    will-change: transform, opacity;
+  }
+
+  .cosmic-particle.bright {
+    background: rgba(255, 255, 255, 0.7);
+    box-shadow: 
+      0 0 4px rgba(255, 255, 255, 0.5),
+      0 0 8px rgba(255, 255, 255, 0.3);
+    animation: moveParticleBright 50s infinite linear;
+  }
+
+  .cosmic-particle.small {
+    width: 1px;
+    height: 1px;
+    background: rgba(255, 255, 255, 0.4);
+    box-shadow: 0 0 2px rgba(255, 255, 255, 0.2);
+    animation: moveParticleSmall 35s infinite linear;
+  }
+
+  .cosmic-particle.large {
+    width: 3px;
+    height: 3px;
+    background: rgba(255, 255, 255, 0.6);
+    box-shadow: 
+      0 0 4px rgba(255, 255, 255, 0.4),
+      0 0 8px rgba(255, 255, 255, 0.2);
+    animation: moveParticleLarge 55s infinite linear;
+  }
+}
+
+@keyframes moveParticle {
+  0% {
+    transform: translate(-10vw, 110vh) rotate(0deg);
+    opacity: 0;
+  }
+  5% {
+    opacity: 0.3;
+  }
+  15% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 0.5;
+    transform: translate(50vw, 50vh) rotate(180deg);
+  }
+  85% {
+    opacity: 0.5;
+  }
+  95% {
+    opacity: 0.3;
+  }
+  100% {
+    transform: translate(110vw, -10vh) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+@keyframes moveParticleBright {
+  0% {
+    transform: translate(-10vw, 110vh) rotate(0deg);
+    opacity: 0;
+  }
+  5% {
+    opacity: 0.4;
+  }
+  15% {
+    opacity: 0.7;
+  }
+  50% {
+    opacity: 0.7;
+    transform: translate(50vw, 50vh) rotate(180deg);
+  }
+  85% {
+    opacity: 0.7;
+  }
+  95% {
+    opacity: 0.4;
+  }
+  100% {
+    transform: translate(110vw, -10vh) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+@keyframes moveParticleSmall {
+  0% {
+    transform: translate(-10vw, 110vh) rotate(0deg);
+    opacity: 0;
+  }
+  5% {
+    opacity: 0.2;
+  }
+  15% {
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 0.4;
+    transform: translate(50vw, 50vh) rotate(180deg);
+  }
+  85% {
+    opacity: 0.4;
+  }
+  95% {
+    opacity: 0.2;
+  }
+  100% {
+    transform: translate(110vw, -10vh) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+@keyframes moveParticleLarge {
+  0% {
+    transform: translate(-10vw, 110vh) rotate(0deg);
+    opacity: 0;
+  }
+  5% {
+    opacity: 0.4;
+  }
+  15% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 0.6;
+    transform: translate(50vw, 50vh) rotate(180deg);
+  }
+  85% {
+    opacity: 0.6;
+  }
+  95% {
+    opacity: 0.4;
+  }
+  100% {
+    transform: translate(110vw, -10vh) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+@layer utilities {
+  .scrollbar {
+    @apply scrollbar-thin scrollbar-track-game-dark scrollbar-thumb-game-primary/20 
+           hover:scrollbar-thumb-game-primary/40;
+  }
+}
