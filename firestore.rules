@@ -27,5 +27,49 @@ service cloud.firestore {
         request.resource.data.email is string &&
         request.resource.data.levelProgress is list;
     }
+
+    // Regras para a coleção de conquistas
+    match /achievements/{userId} {
+      // Mantém a permissão básica de leitura/escrita
+      allow read: if isOwner(userId);
+      
+      // Regra de criação com validação de estrutura
+      allow create: if isOwner(userId) && 
+        request.resource.data.keys().hasAll([
+          'levelsCompleted',
+          'curiositiesRead',
+          'dialogsCompleted',
+          'timePlayed',
+          'achievements',
+          'totalPoints'
+        ]) &&
+        request.resource.data.levelsCompleted is list &&
+        request.resource.data.curiositiesRead is number &&
+        request.resource.data.dialogsCompleted is number &&
+        request.resource.data.timePlayed is number &&
+        request.resource.data.achievements is map &&
+        request.resource.data.totalPoints is number;
+
+      // Regra de atualização com validação de campos
+      allow update: if isOwner(userId) &&
+        // Verifica se os campos atualizados são válidos
+        (!request.resource.data.diff(resource.data).affectedKeys()
+          .hasAny(['levelsCompleted']) || request.resource.data.levelsCompleted is list) &&
+        (!request.resource.data.diff(resource.data).affectedKeys()
+          .hasAny(['curiositiesRead']) || request.resource.data.curiositiesRead is number) &&
+        (!request.resource.data.diff(resource.data).affectedKeys()
+          .hasAny(['dialogsCompleted']) || request.resource.data.dialogsCompleted is number) &&
+        (!request.resource.data.diff(resource.data).affectedKeys()
+          .hasAny(['timePlayed']) || request.resource.data.timePlayed is number) &&
+        (!request.resource.data.diff(resource.data).affectedKeys()
+          .hasAny(['achievements']) || request.resource.data.achievements is map) &&
+        (!request.resource.data.diff(resource.data).affectedKeys()
+          .hasAny(['totalPoints']) || request.resource.data.totalPoints is number) &&
+        // Garante que os valores numéricos não sejam negativos
+        request.resource.data.curiositiesRead >= 0 &&
+        request.resource.data.dialogsCompleted >= 0 &&
+        request.resource.data.timePlayed >= 0 &&
+        request.resource.data.totalPoints >= 0;
+    }
   }
 }

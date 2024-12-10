@@ -582,6 +582,7 @@ button:not(:disabled):hover {
   margin-bottom: 2rem;
   background: linear-gradient(135deg, #00bcd4, #2196f3);
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
   font-weight: bold;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
@@ -829,6 +830,9 @@ button:not(:disabled):hover {
   border-radius: inherit;
   background: linear-gradient(45deg, #4a90e2, #00bcd4) border-box;
   -webkit-mask: 
+    linear-gradient(#fff 0 0) padding-box,
+    linear-gradient(#fff 0 0);
+  mask: 
     linear-gradient(#fff 0 0) padding-box,
     linear-gradient(#fff 0 0);
   -webkit-mask-composite: destination-out;

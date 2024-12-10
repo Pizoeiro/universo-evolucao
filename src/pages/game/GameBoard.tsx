@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import useStore from '../../store/gameStore'
 import { worldLevels } from '../../config/levels/index'
+import { useAchievements } from '../../hooks/useAchievements'
 import './GameBoard.css'
 import { gameService } from '../../config/firebase'
 
@@ -62,6 +63,7 @@ const GameBoard = () => {
   const navigate = useNavigate()
   const { worldId, levelId } = useParams()
   const { user } = useStore()
+  const { updateProgress, updateMatches } = useAchievements()
 
   // Add type for the grid state
   const [grid, setGrid] = useState<Tile[][]>([]);
@@ -288,87 +290,72 @@ const GameBoard = () => {
     currentObjectiveEmojis: string[],
     avoidEmojis: string[] = []
   ): string => {
-    const useObjectiveEmoji = Math.random() < 0.3 && currentObjectiveEmojis.length > 0
+    const useObjectiveEmoji = Math.random() < 0.3;
+    const worldEmojisArray = getWorldEmojis(Number(worldId) || 1);
     
-    // Pegar todos os emojis disponíveis
-    const worldEmojisArray = getWorldEmojis(Number(worldId) || 1)
-    let availableEmojis = useObjectiveEmoji ? currentObjectiveEmojis : worldEmojisArray
+    let availableEmojis = useObjectiveEmoji ? currentObjectiveEmojis : worldEmojisArray;
+    availableEmojis = availableEmojis.filter(emoji => !avoidEmojis.includes(emoji));
 
-    // Remover emojis que queremos evitar
-    availableEmojis = availableEmojis.filter(emoji => !avoidEmojis.includes(emoji))
+    // Função para verificar matches
+    const wouldMatch = (emoji: string, row: number, col: number): boolean => {
+      // Verificar match horizontal
+      const matchHorizontal = 
+        (col >= 2 && currentRow[col - 1]?.emoji === emoji && currentRow[col - 2]?.emoji === emoji) ||
+        (col <= GRID_SIZE - 3 && currentRow[col + 1]?.emoji === emoji && currentRow[col + 2]?.emoji === emoji) ||
+        (col >= 1 && col <= GRID_SIZE - 2 && currentRow[col - 1]?.emoji === emoji && currentRow[col + 1]?.emoji === emoji);
 
-    // Se não houver emojis disponíveis após a filtragem, use todos os emojis do mundo
-    // exceto os que criariam matches imediatos
-    if (availableEmojis.length === 0) {
-      availableEmojis = worldEmojisArray.filter(emoji => {
-        // Verificar se criaria um match horizontal
-        const wouldMatchHorizontal = 
-          (col >= 2 && 
-           currentRow[col - 1]?.emoji === emoji && 
-           currentRow[col - 2]?.emoji === emoji) ||
-          (col <= GRID_SIZE - 3 && 
-           currentRow[col + 1]?.emoji === emoji && 
-           currentRow[col + 2]?.emoji === emoji) ||
-          (col >= 1 && col <= GRID_SIZE - 2 &&
-           currentRow[col - 1]?.emoji === emoji && 
-           currentRow[col + 1]?.emoji === emoji);
+      // Verificar match vertical
+      const matchVertical = 
+        (row >= 2 && currentGrid[row - 1]?.[col]?.emoji === emoji && currentGrid[row - 2]?.[col]?.emoji === emoji) ||
+        (row <= GRID_SIZE - 3 && currentGrid[row + 1]?.[col]?.emoji === emoji && currentGrid[row + 2]?.[col]?.emoji === emoji) ||
+        (row >= 1 && row <= GRID_SIZE - 2 && currentGrid[row - 1]?.[col]?.emoji === emoji && currentGrid[row + 1]?.[col]?.emoji === emoji);
 
-        // Verificar se criaria um match vertical
-        const wouldMatchVertical = 
-          (row >= 2 && 
-           currentGrid[row - 1]?.[col]?.emoji === emoji && 
-           currentGrid[row - 2]?.[col]?.emoji === emoji) ||
-          (row <= GRID_SIZE - 3 && 
-           currentGrid[row + 1]?.[col]?.emoji === emoji && 
-           currentGrid[row + 2]?.[col]?.emoji === emoji) ||
-          (row >= 1 && row <= GRID_SIZE - 2 &&
-           currentGrid[row - 1]?.[col]?.emoji === emoji && 
-           currentGrid[row + 1]?.[col]?.emoji === emoji);
+      return matchHorizontal || matchVertical;
+    };
 
-        return !wouldMatchHorizontal && !wouldMatchVertical;
-      });
+    // Filtrar emojis que criariam matches imediatos
+    if (availableEmojis.length > 0) {
+      availableEmojis = availableEmojis.filter(emoji => !wouldMatch(emoji, row, col));
     }
 
-    // Se ainda não houver emojis disponíveis, use qualquer emoji do mundo
+    // Se não houver emojis disponíveis, usar qualquer emoji do mundo
     if (availableEmojis.length === 0) {
       availableEmojis = worldEmojisArray;
     }
 
     return availableEmojis[Math.floor(Math.random() * availableEmojis.length)];
-  }
+  };
 
   const ensureMinimumObjectiveEmojis = async (
     currentGrid: Tile[][],
     currentObjectiveEmojis: string[]
   ): Promise<Tile[][]> => {
-    let updatedGrid = currentGrid.map(row => row.map(tile => ({ ...tile })))
-    const minObjectiveEmojis = 3
+    const updatedGrid = currentGrid.map(row => row.map(tile => ({ ...tile })));
+    const minObjectiveEmojis = 3;
+    let currentObjectiveCount = 0;
 
     // Contar emojis objetivos existentes
-    let currentObjectiveCount = 0
     updatedGrid.forEach(row => {
       row.forEach(tile => {
         if (currentObjectiveEmojis.includes(tile.emoji)) {
-          currentObjectiveCount++
+          currentObjectiveCount++;
         }
-      })
-    })
-
-    console.log('Contagem atual de objetivos:', currentObjectiveCount) // Debug
+      });
+    });
 
     // Adicionar mais emojis objetivos se necessário
-    while (currentObjectiveCount < minObjectiveEmojis && currentObjectiveEmojis.length > 0) {
-      const row = Math.floor(Math.random() * GRID_SIZE)
-      const col = Math.floor(Math.random() * GRID_SIZE)
-      
+    while (currentObjectiveCount < minObjectiveEmojis) {
+      const row = Math.floor(Math.random() * GRID_SIZE);
+      const col = Math.floor(Math.random() * GRID_SIZE);
+
       if (!currentObjectiveEmojis.includes(updatedGrid[row][col].emoji)) {
-        updatedGrid[row][col].emoji = currentObjectiveEmojis[Math.floor(Math.random() * currentObjectiveEmojis.length)]
-        currentObjectiveCount++
+        updatedGrid[row][col].emoji = currentObjectiveEmojis[Math.floor(Math.random() * currentObjectiveEmojis.length)];
+        currentObjectiveCount++;
       }
     }
 
-    return updatedGrid
-  }
+    return updatedGrid;
+  };
 
   const isAdjacent = (row1: number, col1: number, row2: number, col2: number): boolean => {
     return (
@@ -381,63 +368,37 @@ const GameBoard = () => {
     const matches: Match[] = [];
     const visited = new Set<string>();
 
-    // Função para verificar sequência horizontal
-    const checkHorizontalSequence = (startRow: number, startCol: number): Match | null => {
-      const emoji = board[startRow][startCol].emoji;
+    // Função auxiliar para verificar sequência
+    const checkSequence = (row: number, col: number, direction: 'horizontal' | 'vertical'): Match | null => {
+      const emoji = board[row][col].emoji;
       if (emoji === '') return null;
 
-      const positions: Position[] = [{ row: startRow, col: startCol }];
-      
-      // Verificar à direita
-      let nextCol = startCol + 1;
-      while (nextCol < GRID_SIZE && board[startRow][nextCol].emoji === emoji) {
-        positions.push({ row: startRow, col: nextCol });
-        nextCol++;
+      const positions: Position[] = [{ row, col }];
+      const delta = direction === 'horizontal' ? { row: 0, col: 1 } : { row: 1, col: 0 };
+
+      // Verificar em uma direção
+      let nextRow = row + delta.row;
+      let nextCol = col + delta.col;
+      while (nextRow >= 0 && nextRow < GRID_SIZE && nextCol >= 0 && nextCol < GRID_SIZE && board[nextRow][nextCol].emoji === emoji) {
+        positions.push({ row: nextRow, col: nextCol });
+        nextRow += delta.row;
+        nextCol += delta.col;
       }
-      
-      // Verificar à esquerda
-      nextCol = startCol - 1;
-      while (nextCol >= 0 && board[startRow][nextCol].emoji === emoji) {
-        positions.unshift({ row: startRow, col: nextCol });
-        nextCol--;
+
+      // Verificar na direção oposta
+      nextRow = row - delta.row;
+      nextCol = col - delta.col;
+      while (nextRow >= 0 && nextRow < GRID_SIZE && nextCol >= 0 && nextCol < GRID_SIZE && board[nextRow][nextCol].emoji === emoji) {
+        positions.unshift({ row: nextRow, col: nextCol });
+        nextRow -= delta.row;
+        nextCol -= delta.col;
       }
 
       if (positions.length >= 3) {
         return {
-          positions: positions.sort((a, b) => a.col - b.col), // Ordenar por coluna
+          positions: positions.sort((a, b) => direction === 'horizontal' ? a.col - b.col : a.row - b.row),
           length: positions.length,
-          type: 'horizontal'
-        };
-      }
-      return null;
-    };
-
-    // Função para verificar sequência vertical
-    const checkVerticalSequence = (startRow: number, startCol: number): Match | null => {
-      const emoji = board[startRow][startCol].emoji;
-      if (emoji === '') return null;
-
-      const positions: Position[] = [{ row: startRow, col: startCol }];
-      
-      // Verificar para baixo
-      let nextRow = startRow + 1;
-      while (nextRow < GRID_SIZE && board[nextRow][startCol].emoji === emoji) {
-        positions.push({ row: nextRow, col: startCol });
-        nextRow++;
-      }
-      
-      // Verificar para cima
-      nextRow = startRow - 1;
-      while (nextRow >= 0 && board[nextRow][startCol].emoji === emoji) {
-        positions.unshift({ row: nextRow, col: startCol });
-        nextRow--;
-      }
-
-      if (positions.length >= 3) {
-        return {
-          positions: positions.sort((a, b) => a.row - b.row), // Ordenar por linha
-          length: positions.length,
-          type: 'vertical'
+          type: direction
         };
       }
       return null;
@@ -446,25 +407,19 @@ const GameBoard = () => {
     // Verificar todo o grid
     for (let row = 0; row < GRID_SIZE; row++) {
       for (let col = 0; col < GRID_SIZE; col++) {
-        // Verificar sequência horizontal
-        const horizontalMatch = checkHorizontalSequence(row, col);
-        if (horizontalMatch) {
-          const key = horizontalMatch.positions.map(p => `${p.row},${p.col}`).join('|');
-          if (!visited.has(key)) {
-            matches.push(horizontalMatch);
-            visited.add(key);
-          }
-        }
+        // Verificar sequência horizontal e vertical
+        const horizontalMatch = checkSequence(row, col, 'horizontal');
+        const verticalMatch = checkSequence(row, col, 'vertical');
 
-        // Verificar sequência vertical
-        const verticalMatch = checkVerticalSequence(row, col);
-        if (verticalMatch) {
-          const key = verticalMatch.positions.map(p => `${p.row},${p.col}`).join('|');
-          if (!visited.has(key)) {
-            matches.push(verticalMatch);
-            visited.add(key);
+        [horizontalMatch, verticalMatch].forEach(match => {
+          if (match) {
+            const key = match.positions.map(p => `${p.row},${p.col}`).join('|');
+            if (!visited.has(key)) {
+              matches.push(match);
+              visited.add(key);
+            }
           }
-        }
+        });
       }
     }
 
@@ -496,22 +451,23 @@ const GameBoard = () => {
     const workingGrid = JSON.parse(JSON.stringify(grid));
     workingGrid.forEach((r: Tile[]) => r.forEach((tile: Tile) => { tile.isSelected = false }));
 
-    if (selectedTile === null) {
-      // Verificar possíveis matches quando seleciona a primeira peça
+    const updatePossibleMoves = (currentRow: number, currentCol: number) => {
       const possibleMoves: Position[] = [];
-      
       for (const dir of directions) {
-        const newRow = row + dir.row;
-        const newCol = col + dir.col;
-        
+        const newRow = currentRow + dir.row;
+        const newCol = currentCol + dir.col;
         if (newRow >= 0 && newRow < GRID_SIZE && newCol >= 0 && newCol < GRID_SIZE) {
-          if (checkPossibleMatch(row, col, newRow, newCol)) {
+          if (checkPossibleMatch(currentRow, currentCol, newRow, newCol)) {
             possibleMoves.push({ row: newRow, col: newCol });
           }
         }
       }
+      return possibleMoves;
+    };
 
-      // Se encontrou movimentos possíveis, marca a peça como selecionada
+    if (selectedTile === null) {
+      // Verificar possíveis matches quando seleciona a primeira peça
+      const possibleMoves = updatePossibleMoves(row, col);
       if (possibleMoves.length > 0) {
         workingGrid[row][col].isSelected = true;
         setGrid(workingGrid);
@@ -533,19 +489,7 @@ const GameBoard = () => {
         setPossibleMatches([]);
       } else {
         // Se clicou em outra peça, verifica os possíveis matches dela
-        const possibleMoves: Position[] = [];
-        
-        for (const dir of directions) {
-          const newRow = row + dir.row;
-          const newCol = col + dir.col;
-          
-          if (newRow >= 0 && newRow < GRID_SIZE && newCol >= 0 && newCol < GRID_SIZE) {
-            if (checkPossibleMatch(row, col, newRow, newCol)) {
-              possibleMoves.push({ row: newRow, col: newCol });
-            }
-          }
-        }
-
+        const possibleMoves = updatePossibleMoves(row, col);
         if (possibleMoves.length > 0) {
           workingGrid[row][col].isSelected = true;
           setGrid(workingGrid);
@@ -585,6 +529,10 @@ const GameBoard = () => {
         setGrid(updatedGrid);
       } else {
         // Reverter a troca se não houver matches
+        const temp = { ...workingGrid[row1][col1] };
+        workingGrid[row1][col1] = { ...workingGrid[row2][col2] };
+        workingGrid[row2][col2] = temp;
+        setGrid(workingGrid);
         setSelectedTile(null);
       }
     } finally {
@@ -602,7 +550,6 @@ const GameBoard = () => {
     // Contar matches por emoji (1 por grupo de match)
     matches.forEach(match => {
       const emoji = workingGrid[match.positions[0].row][match.positions[0].col].emoji;
-      // Apenas 1 por grupo de match
       matchedEmojis.set(emoji, (matchedEmojis.get(emoji) || 0) + 1);
       
       match.positions.forEach(({ row, col }) => {
@@ -614,6 +561,11 @@ const GameBoard = () => {
         };
       });
     });
+
+    // Se for um match feito pelo usuário, atualizar o contador de matches
+    if (isUserMatch && matches.length > 0) {
+      await updateMatches();
+    }
 
     // Atualizar grid e esperar animação
     setGrid(workingGrid);
@@ -638,21 +590,11 @@ const GameBoard = () => {
     // 3. Atualizar objetivos se for match do usuário
     if (isUserMatch && matches.length > 0) {
       const updatedObjectives = objectives.map(objective => {
-        // Somar todos os matches de emojis que fazem parte do objetivo
         const matchCount = Array.from(matchedEmojis.entries())
           .filter(([emoji]) => objective.emojis.includes(emoji))
           .reduce((sum, [, count]) => sum + count, 0);
         
         const newMatches = objective.currentMatches + matchCount;
-        
-        console.log(`Atualizando objetivo ${objective.emojis.join('')}:`, {
-          atual: objective.currentMatches,
-          novosMatches: matchCount,
-          total: newMatches,
-          requiredMatches: objective.requiredMatches,
-          emojis: objective.emojis,
-          matchedEmojis: Array.from(matchedEmojis.entries())
-        });
         
         return {
           ...objective,
@@ -709,15 +651,12 @@ const GameBoard = () => {
     // 1. Aplicar gravidade
     for (let col = 0; col < GRID_SIZE; col++) {
       let emptySpaces = [];
-      
-      // Encontrar espaços vazios
       for (let row = GRID_SIZE - 1; row >= 0; row--) {
         if (workingGrid[row][col].emoji === '') {
           emptySpaces.push(row);
         }
       }
 
-      // Mover peças para baixo
       for (let emptyRow of emptySpaces) {
         let sourceRow = emptyRow - 1;
         while (sourceRow >= 0 && workingGrid[sourceRow][col].emoji === '') {
@@ -895,58 +834,54 @@ const GameBoard = () => {
     navigate(`/levels/${worldId}`);
   };
 
-  // Efeito para inicialização e reinicialização do jogo
-  useEffect(() => {
-    if (!currentLevel || initialized) return;
+  const handleLevelComplete = async (stars: number) => {
+    if (!worldId || !levelId || !user) return
 
-    console.log('Effect triggered:', { initialized, currentStar, currentLevel });
+    try {
+      // Atualiza o progresso do nível
+      const levelProgress = {
+        stars,
+        completed: true
+      }
 
-    const currentStarLevel: StarLevel = (['one', 'two', 'three'][currentStar - 1]) as StarLevel;
-    const currentObjectives = currentLevel.starObjectives[currentStarLevel];
+      await gameService.updateLevelProgress(user.uid, Number(worldId), Number(levelId), levelProgress)
+      updateStore(Number(worldId), Number(levelId), stars)
+      
+      // Atualiza as conquistas
+      updateProgress.completeLevel(Number(levelId), stars)
 
-    if (currentObjectives) {
-      const objectives = [{
-        emojis: splitEmojis(currentObjectives.emoji),
-        requiredMatches: currentObjectives.requiredMatches,
-        description: currentObjectives.description,
-        currentMatches: 0,
-        star: currentStar,
-        isActive: true,
-        isCompleted: false
-      }];
-
-      setObjectives(objectives);
-      setMovesLeft(currentObjectives.maxMoves);
-      initializeGrid(splitEmojis(currentObjectives.emoji));
-      setInitialized(true);
+      // Abre o modal de vitória
+      setShowVictoryModal(true)
+    } catch (error) {
+      console.error('Erro ao salvar progresso:', error)
     }
-  }, [currentLevel, initialized, currentStar]);
+  }
 
-  useEffect(() => {
-    if (!currentLevel || initialized) return;
+  // Função para calcular as estrelas baseado na pontuação
+  const calculateStars = (score: number, maxScore: number): number => {
+    const percentage = (score / maxScore) * 100;
+    if (percentage >= 90) return 3;
+    if (percentage >= 70) return 2;
+    if (percentage >= 50) return 1;
+    return 0;
+  };
 
-    console.log('Effect triggered:', { initialized, currentStar, currentLevel });
+  // Atualiza a função handleGameComplete para passar as estrelas
+  const handleGameComplete = async (score: number) => {
+    const stars = calculateStars(score, currentLevel.maxScore);
+    setShowGameComplete(true);
+    setFinalScore(score);
+    setStarsEarned(stars);
 
-    const currentStarLevel: StarLevel = (['one', 'two', 'three'][currentStar - 1]) as StarLevel;
-    const currentObjectives = currentLevel.starObjectives[currentStarLevel];
-
-    if (currentObjectives) {
-      const objectives = [{
-        emojis: splitEmojis(currentObjectives.emoji),
-        requiredMatches: currentObjectives.requiredMatches,
-        description: currentObjectives.description,
-        currentMatches: 0,
-        star: currentStar,
-        isActive: true,
-        isCompleted: false
-      }];
-
-      setObjectives(objectives);
-      setMovesLeft(currentObjectives.maxMoves);
-      initializeGrid(splitEmojis(currentObjectives.emoji));
-      setInitialized(true);
+    // Atualiza o progresso do usuário com as estrelas ganhas
+    await updateProgress.completeLevel(currentLevel.id, stars);
+    
+    // Atualiza o high score se necessário
+    if (score > highScore) {
+      setHighScore(score);
+      await updateHighScore(currentLevel.id, score);
     }
-  }, [currentLevel, initialized, currentStar]);
+  };
 
   // Função auxiliar para verificar se o objetivo atual foi completado
   const isCurrentObjectiveComplete = () => {
@@ -1033,13 +968,13 @@ const GameBoard = () => {
 
     const classes = [
       'tile',
-      isSelected ? 'selected' : '',
-      tile.shake ? 'shake' : '',
-      tile.fall ? 'fall' : '',
-      tile.pop ? 'pop' : '',
-      tile.isMatched ? 'match' : '',
-      isPossibleMatch ? 'possible-match' : '',
-      tile.isNew ? 'new' : '',
+      isSelected && 'selected',
+      tile.shake && 'shake',
+      tile.fall && 'fall',
+      tile.pop && 'pop',
+      tile.isMatched && 'match',
+      isPossibleMatch && 'possible-match',
+      tile.isNew && 'new',
     ].filter(Boolean).join(' ');
 
     return (

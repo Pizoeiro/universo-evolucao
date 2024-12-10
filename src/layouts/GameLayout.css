@@ -3,29 +3,44 @@
 @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap');
 
 .game-layout {
-  min-height: 100vh;
   display: flex;
   flex-direction: column;
+  min-height: 100vh;
+  overflow: hidden;
+  position: relative;
 }
 
 .game-header {
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(10px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  padding: 1rem 2rem;
   position: fixed;
-  width: 100%;
   top: 0;
-  z-index: 10;
+  left: 0;
+  right: 0;
+  height: 72px; /* Altura fixa do header */
+  background: rgba(0, 0, 0, 0.85);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 1000;
 }
 
-.header-content {
+.game-header-content {
   max-width: 1600px;
   margin: 0 auto;
+  height: 100%;
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 0 1rem;
+}
+
+.game-main {
+  flex: 1;
+  margin-top: 72px; /* Mesma altura do header */
+  position: relative;
+  z-index: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  height: calc(100vh - 72px);
 }
 
 .logo {
@@ -86,8 +101,7 @@
   color: white;
   padding: 0.75rem 1.25rem;
   border-radius: 25px;
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(5px);
+  background: rgba(0, 0, 0, 0.75);
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
@@ -120,15 +134,21 @@
   filter: drop-shadow(0 0 2px rgba(255, 215, 0, 0.5));
 }
 
-.main-content {
-  flex: 1;
-  margin-top: 80px;
-  position: relative;
+/* Estilos para garantir que o conteúdo não seja cortado em diferentes breakpoints */
+@media (max-width: 1600px) {
+  .game-header-content {
+    padding: 0 2rem;
+  }
 }
 
 @media (max-width: 768px) {
   .game-header {
-    padding: 1rem;
+    height: 64px;
+  }
+
+  .game-main {
+    margin-top: 64px;
+    height: calc(100vh - 64px);
   }
 
   .nav-buttons {
