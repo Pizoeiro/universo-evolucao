@@ -7,6 +7,10 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { FaStar, FaLock, FaTrophy, FaPlay, FaBook, FaChevronLeft, FaChevronRight } from 'react-icons/fa'
 import './LevelSelect.css'
 
+const MotionLevelCard = motion.div;
+const MotionWorldHeader = motion.div;
+const MotionCarouselButton = motion.button;
+
 export default function LevelSelect() {
   const navigate = useNavigate()
   const { worldId } = useParams()
@@ -99,6 +103,25 @@ export default function LevelSelect() {
     navigate('/worlds')
   }
 
+  const isWorldFullyCompleted = () => {
+    if (!user || !worldId) return false;
+
+    const worldProgress = user.levelProgress?.filter(
+      progress => progress.worldId === worldId
+    ) || [];
+
+    const totalLevels = worldLevels[worldId].levels.length;
+    const completedLevels = worldProgress.filter(progress => progress.completed).length;
+
+    return completedLevels === totalLevels;
+  };
+
+  const handleFinalChapterClick = () => {
+    if (isWorldFullyCompleted()) {
+      navigate(`/main-quest/${worldId}/final`);
+    }
+  };
+
   if (!worldId || !user || !worldLevels[worldId]) {
     return (
       <div className="min-h-screen flex items-center justify-center text-white">
@@ -111,16 +134,25 @@ export default function LevelSelect() {
   const worldStats = getWorldStats()
 
   const [currentPage, setCurrentPage] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
+  const [startX, setStartX] = useState(0);
+  const [scrollLeft, setScrollLeft] = useState(0);
   const carouselRef = useRef<HTMLDivElement>(null);
+  const [isScrolling, setIsScrolling] = useState(false);
+  const scrollTimeout = useRef<NodeJS.Timeout>();
 
-  const cardsPerPage = 5;
+  const cardsPerPage = Math.floor((window.innerWidth - 100) / 320);
   const totalPages = Math.ceil(currentWorld.levels.length / cardsPerPage);
 
   const handleNext = () => {
     if (currentPage < totalPages - 1) {
       setCurrentPage(prev => prev + 1);
       if (carouselRef.current) {
-        carouselRef.current.style.transform = `translateX(-${(currentPage + 1) * 100}%)`;
+        const newScrollLeft = (currentPage + 1) * carouselRef.current.offsetWidth;
+        carouselRef.current.scrollTo({
+          left: newScrollLeft,
+          behavior: 'smooth'
+        });
       }
     }
   };
@@ -129,15 +161,80 @@ export default function LevelSelect() {
     if (currentPage > 0) {
       setCurrentPage(prev => prev - 1);
       if (carouselRef.current) {
-        carouselRef.current.style.transform = `translateX(-${(currentPage - 1) * 100}%)`;
+        const newScrollLeft = (currentPage - 1) * carouselRef.current.offsetWidth;
+        carouselRef.current.scrollTo({
+          left: newScrollLeft,
+          behavior: 'smooth'
+        });
       }
+    }
+  };
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    setIsDragging(true);
+    setStartX(e.pageX - (carouselRef.current?.offsetLeft || 0));
+    setScrollLeft(carouselRef.current?.scrollLeft || 0);
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!isDragging) return;
+    e.preventDefault();
+    const x = e.pageX - (carouselRef.current?.offsetLeft || 0);
+    const walk = (x - startX) * 2;
+    if (carouselRef.current) {
+      carouselRef.current.scrollLeft = scrollLeft - walk;
+    }
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+    if (carouselRef.current) {
+      const totalWidth = carouselRef.current.scrollWidth;
+      const containerWidth = carouselRef.current.offsetWidth;
+      const maxScrollLeft = totalWidth - containerWidth;
+      const scrollPosition = carouselRef.current.scrollLeft;
+      const page = Math.round(scrollPosition / containerWidth);
+      setCurrentPage(page);
     }
   };
 
   const handleWheel = (e: WheelEvent) => {
     if (carouselRef.current) {
       e.preventDefault();
-      carouselRef.current.scrollLeft += e.deltaY;
+      
+      // Adiciona classe de rolagem suave
+      if (!isScrolling) {
+        setIsScrolling(true);
+        carouselRef.current.classList.add('scrolling');
+      }
+      
+      // Limpa o timeout anterior
+      if (scrollTimeout.current) {
+        clearTimeout(scrollTimeout.current);
+      }
+      
+      const delta = e.deltaY || e.deltaX;
+      carouselRef.current.scrollLeft += delta;
+      
+      // Remove a classe após a rolagem terminar
+      scrollTimeout.current = setTimeout(() => {
+        setIsScrolling(false);
+        carouselRef.current?.classList.remove('scrolling');
+        
+        // Ajusta para o card mais próximo
+        if (carouselRef.current) {
+          const containerWidth = carouselRef.current.offsetWidth;
+          const scrollPosition = carouselRef.current.scrollLeft;
+          const page = Math.round(scrollPosition / containerWidth);
+          
+          carouselRef.current.scrollTo({
+            left: page * containerWidth,
+            behavior: 'smooth'
+          });
+          
+          setCurrentPage(page);
+        }
+      }, 150);
     }
   };
 
@@ -150,8 +247,25 @@ export default function LevelSelect() {
       if (carousel) {
         carousel.removeEventListener('wheel', handleWheel);
       }
+      if (scrollTimeout.current) {
+        clearTimeout(scrollTimeout.current);
+      }
     };
-  }, []);
+  }, [isScrolling]);
+
+  // Update cards per page on window resize
+  useEffect(() => {
+    const handleResize = () => {
+      const newCardsPerPage = Math.floor((window.innerWidth - 100) / 320);
+      const newTotalPages = Math.ceil(currentWorld.levels.length / newCardsPerPage);
+      if (currentPage >= newTotalPages) {
+        setCurrentPage(newTotalPages - 1);
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [currentPage, currentWorld.levels.length]);
 
   if (loading) {
     return (
@@ -171,73 +285,104 @@ export default function LevelSelect() {
     )
   }
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
+  const cardVariants = {
+    hidden: (custom: number) => ({
+      opacity: 0,
+      y: 50,
+      scale: 0.8,
+      transition: { delay: custom * 0.1 }
+    }),
+    visible: (custom: number) => ({
       opacity: 1,
+      y: 0,
+      scale: 1,
       transition: {
-        staggerChildren: 0.1
+        type: "spring",
+        stiffness: 100,
+        damping: 15,
+        delay: custom * 0.1
+      }
+    }),
+    hover: {
+      y: -5,
+      scale: 1.02,
+      transition: {
+        type: "spring",
+        stiffness: 400,
+        damping: 10
+      }
+    },
+    tap: {
+      scale: 0.98
+    },
+    exit: {
+      opacity: 0,
+      scale: 0.8,
+      transition: {
+        duration: 0.2
       }
     }
-  }
+  };
 
-  const cardVariants = {
-    hidden: { 
-      opacity: 0,
-      y: 50
-    },
-    visible: { 
+  const headerVariants = {
+    hidden: { opacity: 0, y: -50 },
+    visible: {
       opacity: 1,
       y: 0,
       transition: {
         type: "spring",
         stiffness: 100,
-        damping: 15
+        damping: 20
       }
     }
-  }
+  };
+
+  const buttonVariants = {
+    rest: { scale: 1 },
+    hover: { scale: 1.1 },
+    tap: { scale: 0.95 }
+  };
 
   return (
-    <motion.div 
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.5 }}
-      className="level-select-container"
-    >
-      <motion.div
+    <div className="level-select-container">
+      <MotionWorldHeader
+        variants={headerVariants}
+        initial="hidden"
+        animate="visible"
         className="world-header"
-        initial={{ y: -20, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ delay: 0.2, duration: 0.5 }}
+        data-world-id={worldId}
       >
         <div className="world-header-content">
-          <motion.div 
-            className="world-icon"
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ delay: 0.3, duration: 0.5 }}
-          >
-            {currentWorld.icon}
-          </motion.div>
-          
-          <motion.h1 
-            className="world-title"
-            initial={{ y: 20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.4, duration: 0.5 }}
-          >
-            {currentWorld.name}
-          </motion.h1>
+          <div className="world-left">
+            <motion.div 
+              className="world-icon"
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ delay: 0.3, duration: 0.5 }}
+            >
+              {currentWorld.icon}
+            </motion.div>
+            
+            <div className="world-info">
+              <motion.h1 
+                className="world-title"
+                initial={{ y: 20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ delay: 0.4, duration: 0.5 }}
+              >
+                {currentWorld.name}
+              </motion.h1>
 
-          <motion.p 
-            className="world-description"
-            initial={{ y: 20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.5, duration: 0.5 }}
-          >
-            {currentWorld.description}
-          </motion.p>
+              <motion.p 
+                className="world-description"
+                initial={{ y: 20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ delay: 0.5, duration: 0.5 }}
+              >
+                {currentWorld.description}
+              </motion.p>
+            </div>
+          </div>
 
           <motion.div 
             className="world-stats-container"
@@ -251,7 +396,7 @@ export default function LevelSelect() {
               </div>
               <div className="stat-content">
                 <span className="stat-value">{worldStats.totalStars}</span>
-                <span className="stat-label">/ {currentWorld.levels.length * 3} Estrelas</span>
+                <span className="stat-label">/ {currentWorld.levels.length * 3}</span>
               </div>
             </div>
 
@@ -261,104 +406,157 @@ export default function LevelSelect() {
               </div>
               <div className="stat-content">
                 <span className="stat-value">{worldStats.completedLevels}</span>
-                <span className="stat-label">/ {worldStats.totalLevels} Níveis</span>
+                <span className="stat-label">/ {worldStats.totalLevels}</span>
               </div>
             </div>
           </motion.div>
         </div>
-      </motion.div>
+      </MotionWorldHeader>
+
+      {/* Final Chapter Button */}
+      {worldId && (
+        <motion.button
+          className={`final-chapter-button ${isWorldFullyCompleted() ? 'unlocked' : 'locked'}`}
+          onClick={handleFinalChapterClick}
+          disabled={!isWorldFullyCompleted()}
+          whileHover={isWorldFullyCompleted() ? { scale: 1.05 } : {}}
+          whileTap={isWorldFullyCompleted() ? { scale: 0.95 } : {}}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5, duration: 0.5 }}
+        >
+          {isWorldFullyCompleted() ? 'Capítulo Final' : 'Desbloquear Capítulo Final'}
+        </motion.button>
+      )}
 
       <div className="level-carousel-container">
-        <div className="carousel-controls">
-          <button 
-            className="carousel-button"
-            onClick={handlePrev}
-            disabled={currentPage === 0}
-          >
-            <FaChevronLeft />
-          </button>
-          <button 
-            className="carousel-button"
-            onClick={handleNext}
-            disabled={currentPage === totalPages - 1}
-          >
-            <FaChevronRight />
-          </button>
-        </div>
+        <MotionCarouselButton
+          variants={buttonVariants}
+          initial="rest"
+          whileHover="hover"
+          whileTap="tap"
+          className="carousel-button prev"
+          onClick={handlePrev}
+          disabled={currentPage === 0}
+        >
+          <FaChevronLeft />
+        </MotionCarouselButton>
 
-        <div className="level-carousel" ref={carouselRef}>
-          {currentWorld.levels.map((level, index) => {
-            const { stars, unlocked, completed } = getLevelProgress(level)
-            console.log(`Level ${level.id} - Stars: ${stars}, Unlocked: ${unlocked}, Completed: ${completed}`)
-            
-            return (
-              <motion.div
-                key={level.id}
-                className={`level-card ${!unlocked ? 'locked' : ''} ${
-                  completed ? 'completed' : ''
-                }`}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1 }}
-              >
-                <div className="level-left">
-                  <div className="level-header">
-                    <div className="level-icon">
-                      {unlocked ? level.icon : <FaLock />}
-                    </div>
-                    <div className="level-info">
-                      <div className="level-number">Nível {level.id}</div>
-                      <div className="level-name">{level.name}</div>
-                    </div>
-                  </div>
-                  
-                  <p className="level-description">
-                    {unlocked ? level.description : 'Complete o nível anterior para desbloquear'}
-                  </p>
-                </div>
-
-                <div className="level-right">
-                  <div className="level-footer">
-                    <div className="level-status">
-                      {unlocked ? (completed ? 'Completado' : 'Disponível') : 'Bloqueado'}
-                    </div>
-                    <div className="level-stars-count">
-                      <div className="stars-container">
-                        {Array.from({ length: 3 }).map((_, i) => (
-                          <FaStar
-                            key={i}
-                            className={i < stars ? '' : 'empty'}
-                            size={14}
-                          />
-                        ))}
+        <div
+          ref={carouselRef}
+          className="level-carousel"
+          onMouseDown={handleMouseDown}
+          onMouseMove={handleMouseMove}
+          onMouseUp={handleMouseUp}
+          onMouseLeave={handleMouseUp}
+        >
+          <AnimatePresence mode="wait">
+            {currentWorld.levels.map((level, index) => {
+              const { stars, unlocked, completed } = getLevelProgress(level)
+              return (
+                <MotionLevelCard
+                  key={level.id}
+                  custom={index}
+                  variants={cardVariants}
+                  initial="hidden"
+                  animate="visible"
+                  exit="exit"
+                  whileHover={unlocked ? "hover" : undefined}
+                  whileTap={unlocked ? "tap" : undefined}
+                  className={`level-card ${!unlocked ? 'locked' : ''} ${
+                    completed ? 'completed' : ''
+                  }`}
+                >
+                  <div className="level-left">
+                    <div className="level-header">
+                      <div className="level-icon">
+                        {unlocked ? level.icon : <FaLock />}
+                      </div>
+                      <div className="level-info">
+                        <div className="level-number">Nível {level.id}</div>
+                        <div className="level-name">{level.name}</div>
                       </div>
                     </div>
+                    
+                    <p className="level-description">
+                      {unlocked ? level.description : 'Complete o nível anterior para desbloquear'}
+                    </p>
                   </div>
 
-                  <div className="level-actions">
-                    <button
-                      className={`level-button ${!unlocked ? 'disabled' : ''}`}
-                      disabled={!unlocked}
-                      onClick={() => handleMainQuestClick(level)}
-                    >
-                      <FaBook />
-                      <span>História Principal</span>
-                    </button>
-                    <button
-                      className={`level-button primary ${!unlocked ? 'disabled' : ''}`}
-                      disabled={!unlocked}
-                      onClick={() => handlePlayClick(level)}
-                    >
-                      <FaPlay />
-                      <span>Jogar Nível</span>
-                    </button>
+                  <div className="level-right">
+                    <div className="level-footer">
+                      <div className="level-status">
+                        {unlocked ? (completed ? 'Completado' : 'Disponível') : 'Bloqueado'}
+                      </div>
+                      <div className="level-stars-count">
+                        <div className="stars-container">
+                          {Array.from({ length: 3 }).map((_, i) => (
+                            <FaStar
+                              key={i}
+                              className={i < stars ? '' : 'empty'}
+                              size={14}
+                            />
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="level-actions">
+                      <button
+                        className={`level-button story ${!unlocked ? 'disabled' : ''}`}
+                        disabled={!unlocked}
+                        onClick={() => handleMainQuestClick(level)}
+                      >
+                        <span>Capítulo {level.id}</span>
+                      </button>
+                      <button
+                        className={`level-button primary ${!unlocked ? 'disabled' : ''}`}
+                        disabled={!unlocked}
+                        onClick={() => handlePlayClick(level)}
+                      >
+                        <FaPlay />
+                        <span>Jogar Nível</span>
+                      </button>
+                    </div>
                   </div>
-                </div>
-              </motion.div>
-            )
-          })}
+                </MotionLevelCard>
+              )
+            })}
+          </AnimatePresence>
         </div>
+
+        <MotionCarouselButton
+          variants={buttonVariants}
+          initial="rest"
+          whileHover="hover"
+          whileTap="tap"
+          className="carousel-button next"
+          onClick={handleNext}
+          disabled={currentPage === totalPages - 1}
+        >
+          <FaChevronRight />
+        </MotionCarouselButton>
       </div>
-    </motion.div>
+
+      <div className="carousel-dots">
+        {Array.from({ length: totalPages }).map((_, index) => (
+          <motion.div
+            key={index}
+            className={`carousel-dot ${currentPage === index ? 'active' : ''}`}
+            onClick={() => {
+              setCurrentPage(index)
+              if (carouselRef.current) {
+                carouselRef.current.scrollTo({
+                  left: index * carouselRef.current.offsetWidth,
+                  behavior: 'smooth'
+                })
+              }
+            }}
+            whileHover={{ scale: 1.2 }}
+            whileTap={{ scale: 0.9 }}
+          />
+        ))}
+      </div>
+    </div>
   )
 }

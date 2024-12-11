@@ -62,13 +62,13 @@ const StarBackground: React.FC = () => {
     const x = startNode.x + (targetNode.x - startNode.x) * pulse.progress;
     const y = startNode.y + (targetNode.y - startNode.y) * pulse.progress;
     
-    const gradient = ctx.createRadialGradient(x, y, 0, x, y, 3);
-    gradient.addColorStop(0, `rgba(0, 255, 255, ${pulse.alpha})`);
+    const gradient = ctx.createRadialGradient(x, y, 0, x, y, 4);
+    gradient.addColorStop(0, `rgba(0, 255, 255, ${pulse.alpha * 0.7})`);
     gradient.addColorStop(1, 'rgba(0, 255, 255, 0)');
     
     ctx.fillStyle = gradient;
     ctx.beginPath();
-    ctx.arc(x, y, 3, 0, Math.PI * 2);
+    ctx.arc(x, y, 4, 0, Math.PI * 2);
     ctx.fill();
   };
 
@@ -80,12 +80,12 @@ const StarBackground: React.FC = () => {
       return pulse.progress < 1;
     });
 
-    // Cria novos pulsos aleatoriamente
-    if (Math.random() < 0.01 && node.connections.length > 0) {
+    // Cria novos pulsos menos frequentemente
+    if (Math.random() < 0.005 && node.connections.length > 0) {
       const targetNode = node.connections[Math.floor(Math.random() * node.connections.length)];
       node.pulses.push({
         progress: 0,
-        speed: 0.02,
+        speed: 0.01,
         alpha: 1,
         targetNode
       });
@@ -251,116 +251,111 @@ const StarBackground: React.FC = () => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    const handleResize = () => {
-      const dpr = window.devicePixelRatio || 1;
-      const rect = canvas.getBoundingClientRect();
-      
-      canvas.width = rect.width * dpr;
-      canvas.height = rect.height * dpr;
-      
-      const ctx = canvas.getContext('2d');
-      if (ctx) {
-        ctx.scale(dpr, dpr);
-        ctx.imageSmoothingEnabled = true;
-        (ctx as CanvasRenderingContext2D).imageSmoothingQuality = 'high';
-      }
-      
-      canvas.style.width = `${rect.width}px`;
-      canvas.style.height = `${rect.height}px`;
-      
-      nodesRef.current = [];
-      gridRef.current.clear();
-      
-      const triangleSize = 30;
-      const spacing = triangleSize * 3;
-      
-      // Criar grade de nós
-      for (let y = 0; y < rect.height; y += spacing) {
-        for (let x = 0; x < rect.width; x += spacing) {
-          if (Math.random() < 0.08) {
-            const node = createNode(x, y);
-            node.active = true;
-            node.alpha = 0.6;
-            
-            const gridKey = getGridKey(x, y);
-            gridRef.current.set(gridKey, node);
-            nodesRef.current.push(node);
-          }
-        }
-      }
+    const ctx = canvas.getContext('2d', { 
+      alpha: true,
+      desynchronized: true  // Enable hardware acceleration
+    });
+    if (!ctx) return;
 
-      // Conectar nós próximos após criar todos
-      nodesRef.current.forEach(node => {
-        connectNearbyNodes(node, spacing * 1.5);
+    // Reduce canvas resolution to improve performance
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = window.innerWidth * dpr;
+    canvas.height = window.innerHeight * dpr;
+    ctx.scale(dpr, dpr);
+
+    // Reduce number of nodes and connections
+    const maxNodes = 100;  // Reduced from previous implementation
+    const maxConnectionDistance = 150;  // Reduced connection distance
+
+    const createInitialNodes = () => {
+      const newNodes: Node[] = [];
+      for (let i = 0; i < maxNodes; i++) {
+        const x = Math.random() * canvas.width;
+        const y = Math.random() * canvas.height;
+        newNodes.push(createNode(x, y));
+      }
+      return newNodes;
+    };
+
+    const connectNodes = (nodes: Node[]) => {
+      nodes.forEach(node => {
+        node.connections = nodes.filter(otherNode => {
+          if (node === otherNode) return false;
+          const dx = node.x - otherNode.x;
+          const dy = node.y - otherNode.y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+          return distance < maxConnectionDistance;
+        });
       });
     };
 
-    handleResize();
-    window.addEventListener('resize', handleResize);
+    const nodes = createInitialNodes();
+    connectNodes(nodes);
+    nodesRef.current = nodes;
 
-    let lastFrameTime = performance.now();
-    let frameCount = 0;
-    const frameInterval = 1000 / 30;
+    const animate = (time: number) => {
+      if (!canvas || !ctx) return;
 
-    const animate = (currentTime: number) => {
-      const deltaTime = currentTime - lastFrameTime;
+      // Clear canvas with black background
+      ctx.fillStyle = 'black';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      if (deltaTime >= frameInterval) {
-        const ctx = canvas.getContext('2d');
-        if (!ctx) return;
+      // Simplified node and connection rendering
+      nodes.forEach(node => {
+        // Draw node
+        ctx.beginPath();
+        ctx.fillStyle = getNodeColor(node, 0.5);
+        ctx.arc(node.x, node.y, node.size, 0, Math.PI * 2);
+        ctx.fill();
 
-        lastFrameTime = currentTime - (deltaTime % frameInterval);
-        timeRef.current += 0.5;  
-
-        ctx.fillStyle = 'rgba(0, 0, 0, 0.15)';
-        ctx.fillRect(0, 0, canvas.width / (window.devicePixelRatio || 1), canvas.height / (window.devicePixelRatio || 1));
-
-        if (frameCount % 4 === 0) {  
-          expandNetwork();
-        }
-        frameCount++;
-
-        const visibleNodes = nodesRef.current.filter(node => 
-          node.x >= -50 && 
-          node.x <= canvas.width / (window.devicePixelRatio || 1) + 50 &&
-          node.y >= -50 && 
-          node.y <= canvas.height / (window.devicePixelRatio || 1) + 50
-        );
-
-        updateNodes();
-        visibleNodes.forEach(node => {
-          drawNode(ctx, node, timeRef.current);
+        // Draw connections
+        node.connections.forEach(connectedNode => {
+          ctx.beginPath();
+          ctx.strokeStyle = 'rgba(0, 255, 255, 0.1)';
+          ctx.lineWidth = 1;
+          ctx.moveTo(node.x, node.y);
+          ctx.lineTo(connectedNode.x, connectedNode.y);
+          ctx.stroke();
         });
-      }
+      });
 
+      // Simplified pulse rendering
+      nodes.forEach(node => {
+        updatePulses(node);
+        node.pulses.forEach(pulse => {
+          drawPulse(ctx, node, pulse);
+        });
+      });
+
+      timeRef.current = time;
       requestIdRef.current = requestAnimationFrame(animate);
     };
 
-    animate(performance.now());
+    // Start animation
+    requestIdRef.current = requestAnimationFrame(animate);
 
+    // Cleanup function
     return () => {
       if (requestIdRef.current) {
         cancelAnimationFrame(requestIdRef.current);
       }
-      window.removeEventListener('resize', handleResize);
     };
   }, []);
 
   return (
-    <canvas
-      ref={canvasRef}
-      className="star-background"
-      style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        width: '100%',
-        height: '100%',
-        zIndex: -1,
-        background: 'black',
-        imageRendering: 'high-quality'
-      }}
-    />
+    <div className="star-background">
+      <canvas 
+        ref={canvasRef} 
+        style={{ 
+          position: 'fixed', 
+          top: 0, 
+          left: 0, 
+          width: '100%', 
+          height: '100%',
+          pointerEvents: 'none'
+        }} 
+      />
+    </div>
   );
 };
 

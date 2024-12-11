@@ -52,4 +52,39 @@ export interface Level {
 export interface Character {
   name: string;
   position?: 'left' | 'right';
-} 
+}
+
+export interface Position {
+  row: number;
+  col: number;
+}
+
+export interface Tile {
+  id: string;
+  emoji: string;
+  isSelected: boolean;
+  isMatched: boolean;
+  shake?: boolean;
+  fall?: boolean;
+  pop?: boolean;
+  isNew?: boolean;
+  originalRow?: number;
+}
+
+export interface Objective {
+  emojis: string[];
+  requiredMatches: number;
+  description: string;
+  currentMatches: number;
+  star: number;
+  isActive: boolean;
+  isCompleted: boolean;
+}
+
+export interface Match {
+  positions: Position[];
+  length: number;
+  type: 'horizontal' | 'vertical';
+}
+
+export type StarLevel = 'one' | 'two' | 'three';

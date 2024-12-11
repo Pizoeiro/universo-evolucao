@@ -5,6 +5,7 @@ import { worldLevels } from '../../config/levels/index'
 import { useAchievements } from '../../hooks/useAchievements'
 import './GameBoard.css'
 import { gameService } from '../../config/firebase'
+import { User as GameUser } from '../../types/game'
 
 const GRID_SIZE = 8
 
@@ -63,22 +64,23 @@ const GameBoard = () => {
   const navigate = useNavigate()
   const { worldId, levelId } = useParams()
   const { user } = useStore()
-  const { updateProgress, updateMatches } = useAchievements()
+  const { updateMatches } = useAchievements()
 
-  // Add type for the grid state
-  const [grid, setGrid] = useState<Tile[][]>([]);
-  const [selectedTile, setSelectedTile] = useState<Position | null>(null);
-  const [movesLeft, setMovesLeft] = useState(15) // Valor inicial padrão
-  const [gameOver, setGameOver] = useState(false)
-  const [showResults, setShowResults] = useState(false)
+  // State declarations
+  const [grid, setGrid] = useState<Tile[][]>([])
   const [objectives, setObjectives] = useState<Objective[]>([])
-  const [currentStar, setCurrentStar] = useState(1)
-  const [stars, setStars] = useState<number>(0)
-  const [initialized, setInitialized] = useState(false)
-  const [possibleMatches, setPossibleMatches] = useState<Position[]>([])
+  const [currentStar, setCurrentStar] = useState<number>(1)
+  const [movesLeft, setMovesLeft] = useState<number>(15)
+  const [] = useState<number>(0)
   const [isAnimating, setIsAnimating] = useState<boolean>(false)
   const [starAnimation, setStarAnimation] = useState<number | null>(null)
   const [magicaCosmicaLeft, setMagicaCosmicaLeft] = useState<number>(0)
+  const [gameOver, setGameOver] = useState(false)
+  const [showResults, setShowResults] = useState(false)
+  const [stars, setStars] = useState<number>(0)
+  const [initialized, setInitialized] = useState(false)
+  const [possibleMatches, setPossibleMatches] = useState<Position[]>([])
+  const [selectedTile, setSelectedTile] = useState<Position | null>(null)
 
   // Adicionar um ref para controlar o estado de processamento
   const isProcessing = useRef(false);
@@ -542,12 +544,11 @@ const GameBoard = () => {
   };
 
   const processMatchesAndFall = async (currentGrid: Tile[][], matches: Match[], isUserMatch: boolean): Promise<Tile[][]> => {
-    // 1. Marcar matches para animação
+    // 1. Marcar matches para animação - reduzido delay
     let workingGrid = JSON.parse(JSON.stringify(currentGrid));
     const matchedPositions = new Set<string>();
     const matchedEmojis = new Map<string, number>();
     
-    // Contar matches por emoji (1 por grupo de match)
     matches.forEach(match => {
       const emoji = workingGrid[match.positions[0].row][match.positions[0].col].emoji;
       matchedEmojis.set(emoji, (matchedEmojis.get(emoji) || 0) + 1);
@@ -562,16 +563,15 @@ const GameBoard = () => {
       });
     });
 
-    // Se for um match feito pelo usuário, atualizar o contador de matches
     if (isUserMatch && matches.length > 0) {
       await updateMatches();
     }
 
-    // Atualizar grid e esperar animação
+    // Reduzido o tempo de animação
     setGrid(workingGrid);
-    await new Promise(resolve => setTimeout(resolve, 300));
+    await new Promise(resolve => setTimeout(resolve, 200));
 
-    // 2. Remover elementos matched
+    // 2. Remover elementos matched - sem delay adicional
     workingGrid = JSON.parse(JSON.stringify(workingGrid));
     matchedPositions.forEach(pos => {
       const [row, col] = pos.split(',').map(Number);
@@ -585,59 +585,49 @@ const GameBoard = () => {
     });
 
     setGrid(workingGrid);
-    await new Promise(resolve => setTimeout(resolve, 100));
 
-    // 3. Atualizar objetivos se for match do usuário
+    // 3. Atualizar objetivos
     if (isUserMatch && matches.length > 0) {
       const updatedObjectives = objectives.map(objective => {
         const matchCount = Array.from(matchedEmojis.entries())
           .filter(([emoji]) => objective.emojis.includes(emoji))
           .reduce((sum, [, count]) => sum + count, 0);
         
-        const newMatches = objective.currentMatches + matchCount;
-        
         return {
           ...objective,
-          currentMatches: newMatches
+          currentMatches: objective.currentMatches + matchCount
         };
       });
 
-      // Verificar progresso das estrelas
       if (currentLevel) {
         const currentStarLevel: StarLevel = (['one', 'two', 'three'][currentStar - 1]) as StarLevel;
-        const starObjectiveConfig = currentLevel.starObjectives[currentStarLevel];
+        const starObjectiveConfig = currentLevel?.starObjectives?.[currentStarLevel];
         
         if (starObjectiveConfig) {
           const objective = updatedObjectives[0];
           const objectiveComplete = objective.currentMatches >= starObjectiveConfig.requiredMatches;
           
+          setObjectives(updatedObjectives);
+          
           if (objectiveComplete && movesLeft > 0) {
-            // Atualizar objetivos antes de mostrar resultados
-            setObjectives(updatedObjectives);
-            
-            // Só mostra resultados se realmente completou o objetivo
             Promise.resolve().then(() => {
               handleStarComplete();
             });
           } else if (movesLeft === 0) {
-            setObjectives(updatedObjectives);
             Promise.resolve().then(() => {
               handleGameOver(false);
             });
-          } else {
-            setObjectives(updatedObjectives);
           }
         }
       }
     }
 
-    // 4. Processar a queda
+    // 4. Processar a queda - sem delay adicional
     workingGrid = await handleFall(workingGrid);
     
-    // 5. Verificar novos matches
+    // 5. Verificar novos matches - reduzido delay
     const newMatches = findMatches(workingGrid);
     if (newMatches.length > 0) {
-      await new Promise(resolve => setTimeout(resolve, 100));
       return processMatchesAndFall(workingGrid, newMatches, false);
     }
 
@@ -739,7 +729,7 @@ const GameBoard = () => {
       // Salvar o progresso atual
       await gameService.updateUserProgress(
         user.id,
-        worldId,
+        worldId.toString(),
         Number(levelId),
         newStars,
         true,
@@ -749,7 +739,12 @@ const GameBoard = () => {
       // Buscar dados atualizados do usuário
       const updatedUserData = await gameService.getCurrentUserData(user.id);
       if (updatedUserData) {
-        useStore.getState().setUser(updatedUserData);
+        const gameUser: GameUser = {
+          ...updatedUserData,
+          createdAt: new Date(),
+          lastLoginAt: new Date()
+        };
+        useStore.getState().setUser(gameUser);
       }
     } catch (error) {
       console.error('Erro ao atualizar progresso:', error);
@@ -801,7 +796,7 @@ const GameBoard = () => {
       try {
         await gameService.updateUserProgress(
           user.id,
-          worldId,
+          worldId.toString(),
           Number(levelId),
           finalStars,
           true,
@@ -811,7 +806,12 @@ const GameBoard = () => {
         // Buscar dados atualizados do usuário
         const updatedUserData = await gameService.getCurrentUserData(user.id);
         if (updatedUserData) {
-          useStore.getState().setUser(updatedUserData);
+          const gameUser: GameUser = {
+            ...updatedUserData,
+            createdAt: new Date(),
+            lastLoginAt: new Date()
+          };
+          useStore.getState().setUser(gameUser);
         }
       } catch (error) {
         console.error('Erro ao atualizar progresso:', error);
@@ -834,67 +834,6 @@ const GameBoard = () => {
     navigate(`/levels/${worldId}`);
   };
 
-  const handleLevelComplete = async (stars: number) => {
-    if (!worldId || !levelId || !user) return
-
-    try {
-      // Atualiza o progresso do nível
-      const levelProgress = {
-        stars,
-        completed: true
-      }
-
-      await gameService.updateLevelProgress(user.uid, Number(worldId), Number(levelId), levelProgress)
-      updateStore(Number(worldId), Number(levelId), stars)
-      
-      // Atualiza as conquistas
-      updateProgress.completeLevel(Number(levelId), stars)
-
-      // Abre o modal de vitória
-      setShowVictoryModal(true)
-    } catch (error) {
-      console.error('Erro ao salvar progresso:', error)
-    }
-  }
-
-  // Função para calcular as estrelas baseado na pontuação
-  const calculateStars = (score: number, maxScore: number): number => {
-    const percentage = (score / maxScore) * 100;
-    if (percentage >= 90) return 3;
-    if (percentage >= 70) return 2;
-    if (percentage >= 50) return 1;
-    return 0;
-  };
-
-  // Atualiza a função handleGameComplete para passar as estrelas
-  const handleGameComplete = async (score: number) => {
-    const stars = calculateStars(score, currentLevel.maxScore);
-    setShowGameComplete(true);
-    setFinalScore(score);
-    setStarsEarned(stars);
-
-    // Atualiza o progresso do usuário com as estrelas ganhas
-    await updateProgress.completeLevel(currentLevel.id, stars);
-    
-    // Atualiza o high score se necessário
-    if (score > highScore) {
-      setHighScore(score);
-      await updateHighScore(currentLevel.id, score);
-    }
-  };
-
-  // Função auxiliar para verificar se o objetivo atual foi completado
-  const isCurrentObjectiveComplete = () => {
-    if (!currentLevel || objectives.length === 0) return false;
-    
-    const currentStarLevel: StarLevel = (['one', 'two', 'three'][currentStar - 1]) as StarLevel;
-    const starObjectiveConfig = currentLevel.starObjectives[currentStarLevel];
-    
-    if (!starObjectiveConfig) return false;
-    
-    const objective = objectives[0];
-    return objective.currentMatches >= starObjectiveConfig.requiredMatches;
-  };
 
   // Função para aplicar a Mágica Cósmica
   const aplicarMagicaCosmica = () => {
@@ -956,7 +895,19 @@ const GameBoard = () => {
     }
   }, [currentLevel, initialized]);
 
-  // Função para separar emojis corretamente
+  // Função auxiliar para verificar se o objetivo atual foi completado
+  const isCurrentObjectiveComplete = () => {
+    if (!currentLevel || objectives.length === 0) return false;
+    
+    const currentStarLevel = (['one', 'two', 'three'][currentStar - 1]) as StarLevel;
+    const starObjectiveConfig = currentLevel?.starObjectives?.[currentStarLevel];
+    
+    if (!starObjectiveConfig) return false;
+    
+    const objective = objectives[0];
+    return objective.currentMatches >= starObjectiveConfig.requiredMatches;
+  };
+
   const splitEmojis = (text: string): string[] => {
     const emojiRegex = /\p{Extended_Pictographic}/gu;
     return Array.from(text.match(emojiRegex) || []);
@@ -1108,15 +1059,10 @@ const GameBoard = () => {
                   <span className="button-description">{currentStar + 1}ª Estrela</span>
                 </button>
               )}
-              
               <div className="secondary-actions">
                 <button onClick={handleRestart} className="restart-button">
                   <span className="button-icon">🔄</span>
                   Recomeçar
-                </button>
-                <button onClick={handleBack} className="back-button">
-                  <span className="button-icon">↩️</span>
-                  Voltar
                 </button>
               </div>
             </div>

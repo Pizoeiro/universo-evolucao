@@ -1,48 +1,57 @@
+/* Estilos base */
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
 .cosmic-network {
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  height: 100%;
+  overflow-y: scroll;
+  background-color: transparent;
+  z-index: 2;
+  padding-top: 6rem;
 }
 
-.timeline-title-container {
+.star-background {
+  position: fixed;
+  top: 0;
+  left: 0;
   width: 100%;
-  padding: 2rem;
-  margin-bottom: 6rem;
-  background: linear-gradient(180deg, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 100%);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  z-index: 10;
+  height: 100%;
+  z-index: 1;
+  pointer-events: none;
 }
 
-.timeline-title {
-  text-align: center;
-  font-size: 3rem;
-  font-weight: bold;
-  background: linear-gradient(45deg, #00ffff, #88ccff);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  text-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
-  font-family: 'Orbitron', sans-serif;
+.star-background canvas {
+  width: 100%;
+  height: 100%;
 }
 
 .world-nodes {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 70vh;
-  padding-top: 2rem;  /* Adicionando padding extra no topo dos mundos */
-  position: relative;
-  z-index: 2;
+  gap: 60vh;
+  padding: 20vh 2rem;
+  min-height: 100%;
+  width: 100%;
+  z-index: 3;
 }
 
 .timeline {
-  position: absolute;
+  position: fixed;
   left: 50%;
+  top: 0;
+  bottom: 0;
   transform: translateX(-50%);
   width: 4px;
-  height: 100%;
   background: linear-gradient(to bottom, 
     rgba(0, 255, 255, 0.8),
     rgba(0, 255, 255, 0.3)
@@ -53,12 +62,16 @@
 
 .cosmic-network {
   position: relative;
-  min-height: 100vh;
   width: 100%;
+  min-height: 100vh;
+  overflow-y: auto;
+  padding: 2rem;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding-bottom: 8rem; /* Adicionando padding no final para garantir espaço suficiente */
+  background-color: rgba(0, 0, 0, 0.9);
+  max-height: 100vh;
+  scroll-padding-top: 2rem;
 }
 
 .world-node {
@@ -228,14 +241,16 @@
 .world-image-container {
   position: relative;
   width: 100%;
-  height: 210px;
+  padding-top: 56.25%; /* 16:9 aspect ratio */
   overflow: hidden;
-  border-radius: 15px;
-  margin-bottom: 20px;
+  border-radius: 20px;
   border: 2px solid rgba(0, 255, 255, 0.3);
 }
 
 .world-image {
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -244,11 +259,11 @@
 }
 
 .world-title {
-  font-size: 2.4em;
-  margin-bottom: 0.5em;
-  color: #fff;
-  text-shadow: 0 0 20px rgba(0, 255, 255, 0.7);
-  font-weight: bold;
+  font-size: 1.5rem;
+  text-align: center;
+  margin-bottom: 0.5rem;
+  color: rgba(0, 255, 255, 0.9);
+  text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
 }
 
 .world-description {
@@ -262,6 +277,7 @@
 .world-stats {
   display: flex;
   justify-content: center;
+  align-items: center;
   gap: 30px;
   font-size: 1.1em;
   padding: 15px;
@@ -297,11 +313,11 @@
   }
   
   .world-image-container {
-    height: 175px;
+    padding-top: 56.25%; /* 16:9 aspect ratio */
   }
   
   .world-title {
-    font-size: 2em;
+    font-size: 1.2rem;
   }
   
   .world-description {
@@ -1409,4 +1425,49 @@ html {
 
 main {
   scroll-padding-top: 140px; /* Garante que o scroll não esconda os mundos */
+}
+
+.timeline-title-container {
+  position: fixed;
+  top: 4rem;
+  left: 0;
+  width: 100%;
+  text-align: center;
+  z-index: 120;
+  background: linear-gradient(180deg, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 100%);
+  padding: 1rem 0;
+}
+
+.timeline-title {
+  font-size: 3rem;
+  font-weight: bold;
+  background: linear-gradient(45deg, #00ffff, #88ccff);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+  font-family: 'Orbitron', sans-serif;
+}
+
+.world-stats {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 0.5rem;
+}
+
+.world-stat {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.world-stat-icon {
+  margin-right: 0;
+}
+
+.world-stat span {
+  text-align: center;
 }

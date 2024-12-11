@@ -6,6 +6,7 @@ import { motion } from 'framer-motion'
 import './WorldSelect.css'
 import { FaStar, FaTrophy } from 'react-icons/fa'
 import { FaArrowUp } from 'react-icons/fa'
+import StarBackground from '../../components/StarBackground'
 
 // Importando as imagens dos mundos
 import Mundo1 from '../../assets/Mundos/Mundo1.png'
@@ -89,6 +90,7 @@ export default function WorldSelect() {
   return (
     <>
       <div className="cosmic-network">
+        <StarBackground />
         <div className="timeline-title-container">
           <h1 className="timeline-title">Rede Neural π</h1>
         </div>
@@ -194,15 +196,15 @@ export default function WorldSelect() {
       </div>
 
       {showScrollTop && (
-        <button
+        <motion.button 
+          className="scroll-top-button"
           onClick={scrollToTop}
-          className="fixed bottom-8 right-8 p-4 rounded-full bg-gradient-to-r from-blue-500 to-cyan-500 
-                   text-white shadow-lg hover:scale-110 transition-transform duration-200 z-50
-                   border-2 border-cyan-300/30 backdrop-blur-sm"
-          aria-label="Voltar ao topo"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.3 }}
         >
-          <FaArrowUp className="text-2xl" />
-        </button>
+          <FaArrowUp />
+        </motion.button>
       )}
     </>
   )

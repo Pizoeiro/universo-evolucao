@@ -64,15 +64,15 @@ const FinalChapter: React.FC = () => {
   const getWorldImage = () => {
     switch (worldId) {
       case "1":
-        return "/assets/images/worlds/world1-banner.webp";
+        return "/assets/Mundos/Mundo1.png";
       case "2":
-        return "/assets/images/worlds/world2-banner.webp";
+        return "/assets/Mundos/Mundo2.png";
       case "3":
-        return "/assets/images/worlds/world3-banner.webp";
+        return "/assets/Mundos/Mundo3.png";
       case "4":
-        return "/assets/images/worlds/world4-banner.webp";
+        return "/assets/Mundos/Mundo4.png";
       case "5":
-        return "/assets/images/worlds/world5-banner.webp";
+        return "/assets/Mundos/Mundo5.png";
       default:
         return "";
     }
