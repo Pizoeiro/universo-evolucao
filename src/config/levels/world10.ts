@@ -4,6 +4,9 @@ export const world10: World = {
   name: 'A Explosão da Vida Complexa',
   description: 'Com um planeta rico em oxigênio e ambientes diversificados, a vida complexa explode em variedade. Nesta fase, surgem animais com exoesqueletos, plantas na terra, peixes, anfíbios, répteis, aves, mamíferos, e eventualmente primatas e humanos. Este mundo conclui a jornada, mostrando a vasta diversidade da vida e conectando-a ao surgimento da humanidade, capaz de contemplar o próprio cosmos.',
   icon: '🔭',
+  gridSize: 15,
+  specialEmoji: '🌈',
+  explosionRadius: 10,
   levels: [
     {
       id: 1,

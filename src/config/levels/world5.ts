@@ -4,6 +4,9 @@ export const world5: World = {
   name: 'O Nascimento das Galáxias',
   description: 'A aglomeração de matéria dá origem às primeiras galáxias, estruturas fundamentais do cosmos. Acompanhe a formação e evolução das primeiras galáxias, do caos inicial até a estabilização de complexos sistemas estelares que moldarão o universo.',
   icon: '🌌',
+  gridSize: 10,
+  specialEmoji: '🌃', // Special emoji for world 5
+  explosionRadius: 5, // Explosion affects 5 grid cells around the special emoji
   levels: [
     {
       id: 1,

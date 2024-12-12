@@ -4,6 +4,9 @@ export const world2: World = {
   name: 'A Era das Partículas e da Radiação',
   description: 'Mergulhe em um universo denso e quente, repleto de partículas subatômicas e radiação intensa. Acompanhe a formação das primeiras partículas, núcleos atômicos e o equilíbrio delicado entre matéria, antimatéria e energia.',
   icon: '🔆',
+  gridSize: 7,
+  specialEmoji: '🌟', // Special emoji for world 2
+  explosionRadius: 2, // Explosion affects 2 grid cells around the special emoji
   levels: [
     {
       id: 1,

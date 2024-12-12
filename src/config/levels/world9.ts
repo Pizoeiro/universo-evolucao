@@ -4,6 +4,9 @@ export const world9: World = {
   name: 'A Grande Oxigenação e a Diversificação da Vida',
   description: 'Acompanhe a transformação do planeta com o surgimento da fotossíntese oxigênica. O oxigênio começa a se acumular na atmosfera, a química do planeta muda e organismos mais complexos surgem. Este é o estágio em que a vida se prepara para dar um salto rumo à complexidade biológica que culminará na famosa "Explosão Cambriana".',
   icon: '💨',
+  gridSize: 14,
+  specialEmoji: '🌿',
+  explosionRadius: 9,
   levels: [
     {
       id: 1,

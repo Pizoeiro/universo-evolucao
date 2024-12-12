@@ -4,6 +4,9 @@ export const world7: World = {
   name: 'Terra Primitiva e Ambientes Inóspitos',
   description: 'Acompanhe a formação e estabilização da Terra, desde sua origem a partir do disco solar até a criação de condições propícias ao surgimento da vida. Neste estágio, o planeta passa por bombardeamentos, formação da Lua, resfriamento e desenvolvimento de uma atmosfera e oceanos primordiais, preparando o terreno para a grande transição biológica que está por vir.',
   icon: '🌍',
+  gridSize: 12,
+  specialEmoji: '🌋',
+  explosionRadius: 7,
   levels: [
     {
       id: 1,

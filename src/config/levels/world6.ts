@@ -4,6 +4,9 @@ export const world6: World = {
   name: 'A Forja dos Sistemas Estelares',
   description: 'Dentro das galáxias, nuvens moleculares gigantes dão origem a discos protoplanetários e, eventualmente, sistemas estelares completos. Acompanhe o processo que culmina na formação de planetas, incluindo o nosso próprio Sistema Solar.',
   icon: '🪐',
+  gridSize: 11,
+  specialEmoji: '☄️', // Special emoji for world 6
+  explosionRadius: 6, // Explosion affects 6 grid cells around the special emoji
   levels: [
     {
       id: 1,

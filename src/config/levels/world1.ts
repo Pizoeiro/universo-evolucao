@@ -4,6 +4,9 @@ export const world1: World = {
   name: 'O Grande Início',
   description: 'Explore o momento mais explosivo da história: o Big Bang! Descubra como tudo começou em uma fração de segundo e como o universo se transformou de um ponto minúsculo em algo gigantesco.',
   icon: '💥',
+  gridSize: 6,
+  specialEmoji: '✨', // Special emoji for world 1
+  explosionRadius: 1, // Explosion affects 1 grid cell around the special emoji
   levels: [
     {
       id: 1,

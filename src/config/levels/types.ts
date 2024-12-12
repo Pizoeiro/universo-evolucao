@@ -34,7 +34,10 @@ export interface World {
   name: string
   description: string
   icon: string
+  gridSize: number
   levels: Level[]
+  specialEmoji?: string
+  explosionRadius?: number
 }
 
 export interface WorldLevels {

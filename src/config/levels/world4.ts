@@ -4,6 +4,9 @@ export const world4: World = {
   name: 'O Surgimento das Primeiras Estrelas (População III)',
   description: 'Após a era escura do universo, as primeiras estrelas - enormes e efêmeras - acendem sua luz. Essas estrelas primordiais, conhecidas como População III, forjam novos elementos e iniciam a reionização, abrindo caminho para galáxias e estruturas cósmicas mais complexas.',
   icon: '🌟',
+  gridSize: 9,
+  specialEmoji: '💫',
+  explosionRadius: 4,
   levels: [
     {
       id: 1,

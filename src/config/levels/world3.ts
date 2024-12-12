@@ -4,6 +4,9 @@ export const world3: World = {
   name: 'O Universo Transparente e a Radiação Cósmica de Fundo',
   description: 'Descubra o momento em que o universo se torna transparente e a luz pode finalmente viajar livremente! Acompanhe a formação dos primeiros átomos neutros, a liberação da Radiação Cósmica de Fundo e as leves flutuações que darão origem às futuras galáxias.',
   icon: '🔭',
+  gridSize: 8,
+  specialEmoji: '🌠', // Special emoji for world 3
+  explosionRadius: 3, // Explosion affects 3 grid cells around the special emoji
   levels: [
     {
       id: 1,

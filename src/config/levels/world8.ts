@@ -4,6 +4,9 @@ export const world8: World = {
   name: 'A Origem da Vida',
   description: 'Acompanhe a transição da química pré-biótica para as primeiras formas de vida. Veja o surgimento de moléculas autorreplicantes, protobiontes e os primeiros organismos, passando pelo RNA Mundo até a formação de cadeias alimentares e a modificação da atmosfera pela vida. Este é o momento em que a biologia começa a ganhar espaço no jovem planeta Terra.',
   icon: '🧬',
+  gridSize: 13,
+  specialEmoji: '🦠',
+  explosionRadius: 8,
   levels: [
     {
       id: 1,
