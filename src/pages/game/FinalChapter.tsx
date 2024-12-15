@@ -2,15 +2,15 @@ import React, { Suspense } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { IoArrowBack } from 'react-icons/io5';
-import StarBackground from '../../components/StarBackground';
+import StarBackground from './StarBackground';
 import './FinalChapter.css';
 
 // Importação dinâmica dos capítulos finais
-const World1FinalChapter = React.lazy(() => import('../../config/levels/world1/World1FinalChapter'));
-const World2FinalChapter = React.lazy(() => import('../../config/levels/world2/World2FinalChapter'));
-const World3FinalChapter = React.lazy(() => import('../../config/levels/world3/World3FinalChapter'));
-const World4FinalChapter = React.lazy(() => import('../../config/levels/world4/World4FinalChapter'));
-const World5FinalChapter = React.lazy(() => import('../../config/levels/world5/World5FinalChapter'));
+const World1FinalChapter = React.lazy(() => import('../../data/levels/world1/World1FinalChapter'));
+const World2FinalChapter = React.lazy(() => import('../../data/levels/world2/World2FinalChapter'));
+const World3FinalChapter = React.lazy(() => import('../../data/levels/world3/World3FinalChapter'));
+const World4FinalChapter = React.lazy(() => import('../../data/levels/world4/World4FinalChapter'));
+const World5FinalChapter = React.lazy(() => import('../../data/levels/world5/World5FinalChapter'));
 
 // Variantes de animação
 const containerVariants = {

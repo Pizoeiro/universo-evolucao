@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { Achievement, CategoryFilter } from '../../types/achievements';
 import { useAchievements } from '../../hooks/useAchievements';
-import { achievements } from '../../config/achievements/achievements';
+import { achievements } from '../../data/achievements/achievements';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaSearch, FaSort, FaStar, FaTrophy, FaLock, FaUnlock } from 'react-icons/fa';
 import './Achievements.css';
@@ -17,15 +17,12 @@ const AchievementNotification = ({ title }: { title: string }) => (
   </motion.div>
 );
 
-const ITEMS_PER_PAGE = 12;
-
 const Achievements = () => {
   const { userProgress, getUnlockedAchievements, getAchievementProgress } = useAchievements();
   const [selectedCategory, setSelectedCategory] = useState<CategoryFilter>('all');
   const [notification, setNotification] = useState<string | null>(null);
   const [previousUnlocked, setPreviousUnlocked] = useState<number>(0);
   const [searchTerm, setSearchTerm] = useState('');
-  const [currentPage, setCurrentPage] = useState(1);
   const [sortCriteria, setSortCriteria] = useState<'name' | 'points' | 'progress'>('name');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
 
@@ -52,10 +49,22 @@ const Achievements = () => {
   }, [userProgress, getUnlockedAchievements]);
 
   const filteredAndSortedAchievements = useMemo(() => {
+    const uniqueTitles = new Set<string>();
+
     let filtered = achievements.filter((achievement) => {
       const categoryMatch = selectedCategory === 'all' || achievement.category === selectedCategory;
       const searchMatch = achievement.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          achievement.description.toLowerCase().includes(searchTerm.toLowerCase());
+      
+      const isWorldMasterAchievement = achievement.id.startsWith('world_master');
+      
+      if (isWorldMasterAchievement) {
+        if (uniqueTitles.has(achievement.title)) {
+          return false; 
+        }
+        uniqueTitles.add(achievement.title);
+      }
+      
       return categoryMatch && searchMatch;
     });
 
@@ -75,7 +84,6 @@ const Achievements = () => {
           : b.rewardPoints - a.rewardPoints;
       }
 
-      // Sort by progress and unlock status
       const progressA = getAchievementProgress(a.id)?.percentage || 0;
       const progressB = getAchievementProgress(b.id)?.percentage || 0;
       
@@ -89,12 +97,7 @@ const Achievements = () => {
     });
   }, [achievements, selectedCategory, searchTerm, sortCriteria, sortDirection, userProgress]);
 
-  const paginatedAchievements = useMemo(() => {
-    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-    return filteredAndSortedAchievements.slice(startIndex, startIndex + ITEMS_PER_PAGE);
-  }, [filteredAndSortedAchievements, currentPage]);
-
-  const totalPages = Math.ceil(filteredAndSortedAchievements.length / ITEMS_PER_PAGE);
+  const displayedAchievements = filteredAndSortedAchievements;
 
   const renderStats = () => (
     <div className="achievements-stats">
@@ -228,38 +231,12 @@ const Achievements = () => {
 
       <motion.div 
         className="achievements-grid"
-        initial="hidden"
-        animate="visible"
-        variants={{
-          hidden: { opacity: 0 },
-          visible: {
-            opacity: 1,
-            transition: {
-              staggerChildren: 0.1
-            }
-          }
-        }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ staggerChildren: 0.1 }}
       >
-        {paginatedAchievements.map(renderAchievementCard)}
+        {displayedAchievements.map(renderAchievementCard)}
       </motion.div>
-
-      {totalPages > 1 && (
-        <div className="pagination">
-          <button 
-            onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
-            disabled={currentPage === 1}
-          >
-            Anterior
-          </button>
-          <span>{currentPage} de {totalPages}</span>
-          <button 
-            onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
-            disabled={currentPage === totalPages}
-          >
-            Próxima
-          </button>
-        </div>
-      )}
     </div>
   );
 };

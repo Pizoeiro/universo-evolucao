@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import useStore from '../../store/gameStore'
 import { authService } from '../../config/firebase'
-import StarBackground from '../../components/StarBackground'
+import StarBackground from '../game/StarBackground'
 import { FaGoogle } from 'react-icons/fa'
 
 const Login = () => {

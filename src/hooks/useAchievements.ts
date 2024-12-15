@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { Achievement, UserProgress } from '../types/achievements';
-import { achievements } from '../config/achievements/achievements';
+import { achievements } from '../data/achievements/achievements';
 import { achievementsService } from '../services/achievementsService';
 import { useAuth } from './useAuth';
-import { worldLevels } from '../config/levels';
+import { worldLevels } from '../data/levels';
 
 export const useAchievements = () => {
   const { user } = useAuth();
@@ -139,13 +139,16 @@ export const useAchievements = () => {
 
       const isUnlocked = progress >= achievement.requirement.value;
 
-      newAchievements[achievement.id] = {
-        isUnlocked,
-        progress: Math.min(progress, achievement.requirement.value)
-      };
+      // Only add achievement if it's not already in the achievements object
+      if (!newAchievements[achievement.id]) {
+        newAchievements[achievement.id] = {
+          isUnlocked,
+          progress: Math.min(progress, achievement.requirement.value)
+        };
 
-      if (isUnlocked) {
-        totalPoints += achievement.rewardPoints;
+        if (isUnlocked) {
+          totalPoints += achievement.rewardPoints;
+        }
       }
     });
 

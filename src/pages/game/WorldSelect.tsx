@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import useStore from '../../store/gameStore'
-import { worldLevels } from '../../config/levels'
+import { worldLevels } from '../../data/levels'
 import { motion } from 'framer-motion'
 import './WorldSelect.css'
 import { FaStar, FaTrophy } from 'react-icons/fa'
 import { FaArrowUp } from 'react-icons/fa'
-import StarBackground from '../../components/StarBackground'
+import StarBackground from './StarBackground'
 
 // Importando as imagens dos mundos
 import Mundo1 from '../../assets/Mundos/Mundo1.png'

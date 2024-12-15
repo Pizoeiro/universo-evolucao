@@ -1,16 +1,15 @@
 import { useEffect } from 'react'
-import { Link, useNavigate, Outlet, useLocation } from 'react-router-dom'
-import { FaUser, FaTrophy, FaSignOutAlt, FaBrain, FaAtom, FaMedal } from 'react-icons/fa'
-import useStore from '../store/gameStore'
-import StarBackground from '../components/StarBackground'
-import MusicPlayer from '../components/MusicPlayer'
-import { useAchievements } from '../hooks/useAchievements'
+import { useNavigate, Outlet } from 'react-router-dom'
+import { FaSignOutAlt, FaAtom } from 'react-icons/fa'
+import useStore from "../../store/gameStore"
+import StarBackground from './StarBackground'
+import MusicPlayer from './MusicPlayer'
+import { useAchievements } from '../../hooks/useAchievements'
 import './GameLayout.css'
 
 export default function GameLayout() {
   const navigate = useNavigate()
   const { user, logout } = useStore()
-  const location = useLocation()
   const { updateProgress } = useAchievements()
 
   const handleLogout = () => {
@@ -26,10 +25,6 @@ export default function GameLayout() {
   const getFirstLetterUpperCase = (username?: string) => {
     if (!username) return '?'
     return username.charAt(0).toUpperCase()
-  }
-
-  const handleAchievementsClick = () => {
-    navigate('/achievements')
   }
 
   // Atualiza o tempo jogado a cada 5 minutos
@@ -49,9 +44,9 @@ export default function GameLayout() {
         <div className="game-header-content">
           {/* Left Section */}
           <div className="flex items-center">
-            <Link 
-              to="/worlds" 
-              className="flex items-center gap-3"
+            <div 
+              onClick={() => navigate('/game/universo')}
+              className="flex items-center gap-3 cursor-pointer"
             >
               <FaAtom className="text-4xl text-transparent bg-clip-text 
                       bg-gradient-to-r from-blue-400 via-cyan-400 to-teal-400" />
@@ -67,7 +62,7 @@ export default function GameLayout() {
                   Uma Viagem ao Conhecimento
                 </span>
               </div>
-            </Link>
+            </div>
           </div>
 
           {/* Center Section - Music Player */}
@@ -97,55 +92,15 @@ export default function GameLayout() {
                   </div>
                 </div>
 
-                <div className="flex items-center gap-2">
-                  {!location.pathname.startsWith('/worlds') && (
-                    <Link
-                      to="/worlds"
-                      className="p-2.5 text-cyan-300 hover:text-white transition-all 
-                            border border-cyan-500/20 rounded-lg hover:border-cyan-500/40
-                            bg-black/85 hover:bg-black/95 hover:scale-105"
-                      title="Mundos"
-                    >
-                      <FaBrain className="text-lg" />
-                    </Link>
-                  )}
-                  <Link 
-                    to="/game/profile" 
-                    className="p-2.5 text-cyan-300 hover:text-white transition-all 
-                          border border-cyan-500/20 rounded-lg hover:border-cyan-500/40
-                          bg-black/85 hover:bg-black/95 hover:scale-105"
-                    title="Perfil"
-                  >
-                    <FaUser className="text-lg" />
-                  </Link>
-                  <Link 
-                    to="/rankings" 
-                    className="p-2.5 text-cyan-300 hover:text-white transition-all 
-                          border border-cyan-500/20 rounded-lg hover:border-cyan-500/40
-                          bg-black/85 hover:bg-black/95 hover:scale-105"
-                    title="Rankings"
-                  >
-                    <FaTrophy className="text-lg" />
-                  </Link>
-                  <button 
-                    onClick={handleAchievementsClick}
-                    className="p-2.5 text-cyan-300 hover:text-white transition-all 
-                          border border-cyan-500/20 rounded-lg hover:border-cyan-500/40
-                          bg-black/85 hover:bg-black/95 hover:scale-105"
-                    title="Conquistas"
-                  >
-                    <FaMedal className="text-lg" />
-                  </button>
-                  <button 
-                    onClick={handleLogout}
-                    className="p-2.5 text-red-400 hover:text-red-300 transition-all 
-                          border border-red-500/20 rounded-lg hover:border-red-500/40
-                          bg-black/85 hover:bg-black/95 hover:scale-105"
-                    title="Sair"
-                  >
-                    <FaSignOutAlt className="text-lg" />
-                  </button>
-                </div>
+                <button 
+                  onClick={handleLogout}
+                  className="p-2.5 text-red-400 hover:text-red-300 transition-all 
+                        border border-red-500/20 rounded-lg hover:border-red-500/40
+                        bg-black/85 hover:bg-black/95 hover:scale-105"
+                  title="Sair"
+                >
+                  <FaSignOutAlt className="text-lg" />
+                </button>
               </>
             )}
           </nav>

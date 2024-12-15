@@ -19,12 +19,12 @@ export interface Level {
   description: string
   story: string
   icon: string
+  gridSize?: number // Tamanho do grid específico para o nível
   starObjectives: {
     one: StarObjective
     two: StarObjective
     three: StarObjective
   }
-  combinations: Combination[]
   targetScore?: number
   unlockMessage?: string
   magicaCosmicaCount?: number // Número de vezes que a Mágica Cósmica pode ser usada no nível
@@ -38,8 +38,10 @@ export interface World {
   levels: Level[]
   specialEmoji?: string
   explosionRadius?: number
+  combinations: Combination[] // Adicionando combinações no nível do mundo
 }
 
 export interface WorldLevels {
   [key: string]: World
+  [key: `${string}-extreme`]: World  // Suporte para versões extremas dos mundos
 }

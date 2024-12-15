@@ -1,5 +1,6 @@
 import { WorldLevels } from './types'
 import { world1 } from './world1'
+import { world1Extreme } from './world1/extreme/world1'
 import { world10 } from './world10'
 import { world2 } from './world2'
 import { world3 } from './world3'
@@ -14,6 +15,7 @@ export * from './types'
 
 export const worldLevels: WorldLevels = {
   "1": world1,
+  "1-extreme": world1Extreme,
   "2": world2,
   "3": world3,
   "4": world4,

@@ -1,0 +1,505 @@
+:root {
+  --color-primary: #00ffff;
+  --color-secondary: #88ccff;
+  --color-accent: #ffd700;
+  --color-terminal: #00ff00;
+  --color-background: rgba(13, 17, 23, 0.2);
+  --glow-primary: rgba(0, 255, 255, 0.2);
+  --font-heading: 'Orbitron', sans-serif;
+  --font-body: 'Quicksand', sans-serif;
+  --hologram-glow: 0 0 20px rgba(0, 255, 255, 0.3);
+  --hologram-border: 1px solid rgba(0, 255, 255, 0.3);
+  --glitch-color-1: rgba(0, 255, 255, 0.5);
+  --glitch-color-2: rgba(255, 0, 255, 0.5);
+  --opacity-general: 1;
+  --hologram-opacity: 1;
+  --glow-intensity: 1;
+  --animation-speed: 1;
+}
+
+html, body {
+  overflow-y: auto;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-primary) transparent;
+}
+
+body::-webkit-scrollbar {
+  width: 8px;
+}
+
+body::-webkit-scrollbar-track {
+  background: rgba(13, 17, 23, 0.6);
+  border-radius: 10px;
+}
+
+body::-webkit-scrollbar-thumb {
+  background: var(--color-primary);
+  border-radius: 10px;
+  transition: all 0.3s ease;
+}
+
+body::-webkit-scrollbar-thumb:hover {
+  background: var(--color-secondary);
+}
+
+.achievements-container {
+  position: relative;
+  min-height: 100vh;
+  width: 100%;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: radial-gradient(circle at center, 
+    rgba(13, 25, 48, 0.85) 0%,
+    rgba(13, 17, 23, 0.95) 100%
+  );
+  gap: 1.5rem;
+  overflow-y: auto;
+  will-change: transform;
+}
+
+.achievements-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.achievements-container::-webkit-scrollbar-track {
+  background: rgba(13, 17, 23, 0.6);
+  border-radius: 10px;
+}
+
+.achievements-container::-webkit-scrollbar-thumb {
+  background: var(--color-primary);
+  border-radius: 10px;
+  transition: all 0.3s ease;
+}
+
+.achievements-container::-webkit-scrollbar-thumb:hover {
+  background: var(--color-secondary);
+}
+
+.cockpit-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    linear-gradient(45deg, rgba(0, 255, 255, 0.08) 0%, transparent 25%),
+    radial-gradient(circle at center, transparent 45%, rgba(0, 0, 0, 0.4) 100%);
+  pointer-events: none;
+  backdrop-filter: blur(1px);
+}
+
+.achievements-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: 
+    radial-gradient(var(--color-primary) 0.8px, transparent 0.8px),
+    radial-gradient(var(--color-primary) 0.8px, transparent 0.8px);
+  background-size: 50px 50px;
+  background-position: 0 0, 25px 25px;
+  animation: twinkle 4s ease-in-out infinite alternate;
+  opacity: 0.08;
+  pointer-events: none;
+}
+
+.achievements-header {
+  text-align: center;
+  margin-bottom: 3rem;
+  position: relative;
+}
+
+.achievements-header h1 {
+  font-family: var(--font-heading);
+  font-size: 3rem;
+  background: linear-gradient(90deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: var(--hologram-glow);
+  margin-bottom: 1.5rem;
+  transform: perspective(500px) rotateX(10deg);
+}
+
+.achievements-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.search-bar {
+  display: flex;
+  align-items: center;
+  background: rgba(13, 17, 23, 0.75);
+  padding: 0.5rem 1rem;
+  border-radius: 2rem;
+  flex: 1;
+  max-width: 400px;
+  backdrop-filter: blur(8px);
+  border: var(--hologram-border);
+  transition: all 0.25s ease;
+}
+
+.search-bar:focus-within {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 15px rgba(0, 255, 255, 0.15);
+}
+
+.search-bar svg {
+  margin-right: 0.5rem;
+  color: var(--color-primary);
+}
+
+.search-bar input {
+  background: transparent;
+  border: none;
+  color: var(--color-primary);
+  width: 100%;
+  outline: none;
+  font-size: 1rem;
+}
+
+.search-bar input::placeholder {
+  color: rgba(0, 255, 255, 0.5);
+}
+
+.sort-controls {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.sort-controls select {
+  background: rgba(13, 17, 23, 0.6);
+  border: var(--hologram-border);
+  color: var(--color-primary);
+  padding: 0.5rem 1rem;
+  border-radius: 1rem;
+  outline: none;
+  cursor: pointer;
+  backdrop-filter: blur(10px);
+}
+
+.sort-controls button {
+  background: rgba(13, 17, 23, 0.6);
+  border: var(--hologram-border);
+  color: var(--color-primary);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+}
+
+.sort-controls button:hover {
+  background: rgba(0, 255, 255, 0.1);
+  border-color: var(--color-primary);
+  box-shadow: var(--hologram-glow);
+}
+
+.category-button {
+  background: rgba(13, 17, 23, 0.75);
+  border: var(--hologram-border);
+  color: var(--color-primary);
+  padding: 0.8rem 1.5rem;
+  border-radius: 2rem;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  backdrop-filter: blur(8px);
+  font-weight: 500;
+}
+
+.category-button svg {
+  font-size: 1.2rem;
+}
+
+.category-button:hover {
+  background: rgba(0, 255, 255, 0.1);
+  border-color: var(--color-primary);
+  box-shadow: var(--hologram-glow);
+}
+
+.category-button.active {
+  background: rgba(0, 255, 255, 0.2);
+  border-color: var(--color-primary);
+  box-shadow: var(--hologram-glow);
+}
+
+.achievements-stats {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  margin-bottom: 3rem;
+  flex-wrap: wrap;
+  perspective: 1000px;
+}
+
+.stat-card {
+  background: rgba(13, 17, 23, 0.75);
+  padding: 1.5rem 2.5rem;
+  border-radius: 1rem;
+  border: var(--hologram-border);
+  text-align: center;
+  min-width: 180px;
+  transform-style: preserve-3d;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  backdrop-filter: blur(8px);
+  will-change: transform;
+}
+
+.stat-card:hover {
+  transform: translateY(-5px) rotateX(8deg);
+  box-shadow: 
+    0 0 20px rgba(0, 255, 255, 0.2),
+    0 0 40px rgba(0, 255, 255, 0.1);
+}
+
+.stat-card h3 {
+  color: var(--color-primary);
+  margin-bottom: 0.8rem;
+  font-size: 1.2rem;
+  font-family: var(--font-heading);
+}
+
+.stat-card p {
+  background: linear-gradient(90deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.achievements-categories {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 3rem;
+  flex-wrap: wrap;
+}
+
+.achievements-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 1.5rem;
+  width: 100%;
+  max-width: 1800px;
+  margin: 0 auto;
+  overflow-y: visible;
+}
+
+.achievements-grid .achievement-card {
+  aspect-ratio: 1 / 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+@media (max-width: 1600px) {
+  .achievements-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+@media (max-width: 1200px) {
+  .achievements-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 900px) {
+  .achievements-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .achievements-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.achievement-card {
+  background: rgba(13, 17, 23, 0.75);
+  border: var(--hologram-border);
+  padding: 1.5rem;
+  position: relative;
+  overflow: hidden;
+  backdrop-filter: blur(8px);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: translateZ(0);
+}
+
+.achievement-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--color-primary);
+  box-shadow: 
+    0 0 15px rgba(0, 255, 255, 0.2),
+    0 0 30px rgba(0, 255, 255, 0.1);
+}
+
+.achievement-card.unlocked {
+  background: rgba(0, 255, 255, 0.1);
+  border-color: var(--color-primary);
+}
+
+.achievement-card.locked {
+  filter: grayscale(0.8);
+}
+
+.achievement-status-icon {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  color: rgba(0, 255, 255, 0.5);
+}
+
+.achievement-points {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  background: rgba(0, 255, 255, 0.2);
+  padding: 0.3rem 0.8rem;
+  border-radius: 1rem;
+  font-size: 0.9rem;
+  backdrop-filter: blur(10px);
+}
+
+.achievement-icon {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  margin-top: 2rem;
+  text-align: center;
+}
+
+.achievement-title {
+  font-size: 1.2rem;
+  margin-bottom: 0.5rem;
+  color: var(--color-primary);
+  font-family: var(--font-heading);
+}
+
+.achievement-description {
+  color: rgba(0, 255, 255, 0.8);
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+  line-height: 1.4;
+}
+
+.achievement-progress {
+  margin-top: 1.5rem;
+}
+
+.progress-bar {
+  height: 6px;
+  background: rgba(0, 255, 255, 0.08);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 0.5rem;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, 
+    var(--color-primary) 0%, 
+    var(--color-secondary) 100%
+  );
+  border-radius: 3px;
+  transition: width 0.3s ease-out;
+}
+
+.progress-text {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  color: rgba(0, 255, 255, 0.6);
+}
+
+.achievement-notification {
+  position: fixed;
+  top: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 255, 255, 0.9);
+  padding: 1rem 2rem;
+  border-radius: 2rem;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.pagination button {
+  background: rgba(13, 17, 23, 0.6);
+  border: var(--hologram-border);
+  color: var(--color-primary);
+  padding: 0.5rem 1.5rem;
+  border-radius: 2rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.pagination button:hover:not(:disabled) {
+  background: rgba(0, 255, 255, 0.1);
+  border-color: var(--color-primary);
+  box-shadow: var(--hologram-glow);
+}
+
+.pagination button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.pagination span {
+  color: rgba(0, 255, 255, 0.8);
+}
+
+@media (max-width: 768px) {
+  .achievements-container {
+    padding: 1rem;
+  }
+
+  .achievements-header h1 {
+    font-size: 2rem;
+  }
+
+  .achievements-controls {
+    flex-direction: column;
+  }
+
+  .search-bar {
+    max-width: 100%;
+  }
+
+  .stat-card {
+    width: 100%;
+  }
+}

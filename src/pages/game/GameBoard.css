@@ -1,276 +1,438 @@
-@keyframes shake {
-  0%, 100% { transform: translate3d(0, 0, 0); }
-  10%, 90% { transform: translate3d(-1px, 0, 0); }
-  20%, 80% { transform: translate3d(2px, 0, 0); }
-  30%, 50%, 70% { transform: translate3d(-2px, 0, 0); }
-  40%, 60% { transform: translate3d(2px, 0, 0); }
+/* Variáveis de Design */
+:root {
+  /* Cores Principais */
+  --color-primary: #00ffff;
+  --color-secondary: #88ccff;
+  --color-accent: #ffd700;
+  
+  /* Cores de Estado */
+  --color-success: #00ffff;
+  --color-error: #ff4e4e;
+  --color-warning: #ffd700;
+  
+  /* Cores de Fundo */
+  --color-background: rgba(13, 17, 23, 0.2);
+  --color-background-hover: rgba(13, 17, 23, 0.3);
+  --color-background-active: rgba(13, 17, 23, 0.4);
+  
+  /* Cores de Texto */
+  --color-text: #ffffff;
+  --color-text-secondary: rgba(255, 255, 255, 0.7);
+  --color-text-disabled: rgba(255, 255, 255, 0.5);
+  
+  /* Efeitos */
+  --glow-primary: rgba(0, 255, 255, 0.2);
+  --glow-secondary: rgba(136, 204, 255, 0.2);
+  --glow-accent: rgba(255, 215, 0, 0.2);
+  --shadow-color: rgba(0, 0, 0, 0.2);
+  
+  /* Gradientes */
+  --gradient-primary: linear-gradient(45deg, var(--color-primary), var(--color-secondary));
+  
+  /* Tipografia */
+  --font-heading: 'Orbitron', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  --font-size-xs: 0.75rem;
+  --font-size-sm: 0.85rem;
+  --font-size-md: 1rem;
+  --font-size-lg: 1.25rem;
+  --font-size-xl: 1.5rem;
+  
+  /* Espaçamento */
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  
+  /* Bordas */
+  --border-radius-sm: 0.5rem;
+  --border-radius-md: 0.75rem;
+  --border-radius-lg: 1rem;
 }
 
-.shake {
-  animation: shake 0.2s cubic-bezier(.36,.07,.19,.97) both;
-  will-change: transform;
-}
-
-@keyframes pop {
-  0% { transform: scale(0.3); opacity: 0; }
-  50% { transform: scale(1.2); opacity: 0.8; }
-  100% { transform: scale(1); opacity: 1; }
-}
-
-.pop {
-  animation: pop 0.2s ease-out forwards;
-  will-change: transform, opacity;
-}
-
-@keyframes fall {
-  0% { 
-    transform: translateY(-100%); 
-    opacity: 0;
-  }
-  100% { 
-    transform: translateY(0); 
-    opacity: 1;
-  }
-}
-
-.fall {
-  animation: fall 0.3s ease-out forwards;
-  will-change: transform, opacity;
-}
-
-@keyframes match {
-  0% { transform: scale(1); opacity: 1; }
-  50% { transform: scale(1.2); opacity: 0.8; }
-  100% { transform: scale(0); opacity: 0; }
-}
-
-.match {
-  animation: match 0.2s ease-in-out forwards;
-  will-change: transform, opacity;
-}
-
-.possible-match {
-  animation: possibleMatch 1s ease-in-out infinite alternate;
-  will-change: box-shadow, border-color, opacity;
-}
-
-@keyframes possibleMatch {
-  from {
-    box-shadow: 0 0 3px #22c55e,
-                0 0 6px #22c55e;
-    border-color: #22c55e;
-    opacity: 0.6;
-  }
-  to {
-    box-shadow: 0 0 10px #22c55e,
-                0 0 15px #22c55e;
-    border-color: #22c55e;
-    opacity: 1;
-  }
-}
-
-/* Animação de seleção com brilho */
-.match {
-  animation: glow 1.5s ease-in-out;
-  box-shadow: 0 0 10px #fff,
-              0 0 20px #9333ea,
-              0 0 30px #9333ea;
-  z-index: 1;
-  position: relative;
-}
-
-@keyframes glow {
-  0% {
-    box-shadow: 0 0 5px #fff,
-                0 0 10px #9333ea;
-  }
-  50% {
-    box-shadow: 0 0 10px #fff,
-                0 0 20px #9333ea,
-                0 0 30px #9333ea;
-  }
-  100% {
-    box-shadow: 0 0 5px #fff,
-                0 0 10px #9333ea;
-  }
-}
-
-/* Animação de match */
-.match {
-  animation: match 0.5s ease-out forwards;
-}
-
-@keyframes match {
-  0% {
-    transform: scale(1);
-    opacity: 1;
-  }
-  50% {
-    transform: scale(1.2);
-    opacity: 0.8;
-  }
-  100% {
-    transform: scale(0);
-    opacity: 0;
-  }
-}
-
-/* Animação de shake */
-.shake {
-  animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
-}
-
-@keyframes shake {
-  10%, 90% {
-    transform: translate3d(-1px, 0, 0);
-  }
-  20%, 80% {
-    transform: translate3d(2px, 0, 0);
-  }
-  30%, 50%, 70% {
-    transform: translate3d(-2px, 0, 0);
-  }
-  40%, 60% {
-    transform: translate3d(2px, 0, 0);
-  }
-}
-
-/* Animação de queda */
-.fall {
-  animation: fall 0.5s ease-in forwards;
-}
-
-@keyframes fall {
-  0% {
-    transform: translateY(-100%);
-    opacity: 0;
-  }
-  60% {
-    transform: translateY(10%);
-    opacity: 1;
-  }
-  80% {
-    transform: translateY(-5%);
-  }
-  100% {
-    transform: translateY(0);
-  }
-}
-
-/* Animação de pop */
-.pop {
-  animation: pop 0.3s ease-out forwards;
-}
-
-@keyframes pop {
-  0% {
-    transform: scale(0.3);
-    opacity: 0;
-  }
-  50% {
-    transform: scale(1.2);
-  }
-  100% {
-    transform: scale(1);
-    opacity: 1;
-  }
-}
-
-/* Animação de possível match */
-.possible-match {
-  animation: possibleMatch 1.5s ease-in-out infinite alternate;
-}
-
-@keyframes possibleMatch {
-  from {
-    box-shadow: 0 0 5px #22c55e,
-                0 0 10px #22c55e;
-    border-color: #22c55e;
-    opacity: 0.6;
-  }
-  to {
-    box-shadow: 0 0 15px #22c55e,
-                0 0 20px #22c55e;
-    border-color: #22c55e;
-    opacity: 1;
-  }
-}
-
-/* Hover suave */
-button:not(:disabled) {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-button:not(:disabled):hover {
-  transform: scale(1.05);
-  z-index: 1;
-}
-
-/* Container da história */
-.story-container {
-  position: relative;
-  overflow: hidden;
-  transition: all 0.3s ease;
-}
-
-.story-container::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: radial-gradient(circle at center, rgba(139, 92, 246, 0.1), transparent);
-  pointer-events: none;
-  opacity: 0.5;
-}
-
-.story-container:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 20px -2px rgba(139, 92, 246, 0.25);
-}
-
-.story-container:hover::before {
-  opacity: 0.8;
-}
-
-/* Container principal do jogo */
 .game-board {
-  min-height: 100vh;
-  position: relative;
-  overflow: hidden;
+  height: 100vh;
+  width: 100vw;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 2rem;
+  flex-direction: column;
+  overflow: hidden;
+  padding: var(--spacing-sm);
+  background: #000;
+  font-family: var(--font-body);
+  color: var(--color-text);
 }
 
 .game-container {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  max-height: 100vh;
-  padding: 10px;
-  overflow-y: auto;
+  height: 100%;
+  display: grid;
+  grid-template-columns: 330px 1fr;
+  grid-template-areas: "info grid";
+  gap: var(--spacing-md);
+  padding-top: 2rem; /* Adiciona espaço no topo */
+  align-items: flex-start; /* Alinha ao topo ao invés de center */
 }
 
 .info-section {
+  grid-area: info;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
-  flex-shrink: 0;
+  height: 70vh;
+  max-height: 70vh;
+  background: rgba(13, 17, 23, 0.85);
+  border: 1px solid var(--color-primary);
+  border-radius: var(--border-radius-lg);
+  padding: var(--spacing-sm);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 4px 6px var(--shadow-color);
 }
 
-/* Layout responsivo para desktop */
+.header-container {
+  flex: 0 0 15%;
+  display: flex;
+  flex-direction: column;
+  padding: var(--spacing-xs);
+  min-height: fit-content;
+}
+
+.header-container h1 {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-lg);
+  margin: 0;
+  line-height: 1.2;
+  color: var(--color-primary);
+  letter-spacing: 0.5px;
+}
+
+.level-story {
+  font-size: var(--font-size-sm);
+  margin: var(--spacing-xs) 0;
+  line-height: 1.4;
+  color: var(--color-text-secondary);
+}
+
+.button-container {
+  display: flex;
+  gap: var(--spacing-xs);
+  margin-top: var(--spacing-xs);
+}
+
+.button-container button {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  background: var(--gradient-primary);
+  border: none;
+  border-radius: var(--border-radius-sm);
+  color: var(--color-text);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.button-container button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 15px var(--glow-primary);
+}
+
+.info-container {
+  flex: 0 0 85%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.objectives {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-xs);
+  overflow-y: auto;
+}
+
+.objective {
+  flex: 0 0 auto;
+  padding: var(--spacing-sm);
+  margin-bottom: var(--spacing-xs);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+  background: var(--color-background);
+  border-radius: var(--border-radius-sm);
+  border: 1px solid var(--color-secondary);
+  transition: all 0.3s ease;
+}
+
+.objective:hover {
+  background: var(--color-background-hover);
+  transform: translateX(2px);
+}
+
+.objective-header {
+  padding: var(--spacing-xs);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: var(--font-size-sm);
+  font-family: var(--font-heading);
+  color: var(--color-primary);
+}
+
+.objective-description {
+  font-size: var(--font-size-xs);
+  line-height: 1.4;
+  padding: 0 var(--spacing-xs);
+  color: var(--color-text-secondary);
+}
+
+.moves-container {
+  flex: 0 0 auto;
+  padding: var(--spacing-sm);
+  margin-top: var(--spacing-xs);
+  background: var(--color-background);
+  border-radius: var(--border-radius-sm);
+  font-size: var(--font-size-sm);
+  border: 1px solid var(--color-accent);
+  color: var(--color-accent);
+}
+
+.grid-container {
+  grid-area: grid;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+.grid {
+  display: grid;
+  gap: 0.5rem;
+  width: min(95vh, 95%);
+  height: min(95vh, 95%);
+  padding: 0.5rem;
+  background: var(--color-background);
+  border-radius: var(--border-radius-lg);
+  border: 1px solid var(--color-primary);
+  box-shadow: 0 0 20px var(--glow-primary);
+}
+
+/* Grid sizes from 7x7 to 15x15 */
+.grid[data-size="7"] { grid-template-columns: repeat(7, 1fr); }
+.grid[data-size="8"] { grid-template-columns: repeat(8, 1fr); }
+.grid[data-size="9"] { grid-template-columns: repeat(9, 1fr); }
+.grid[data-size="10"] { grid-template-columns: repeat(10, 1fr); }
+.grid[data-size="11"] { grid-template-columns: repeat(11, 1fr); }
+.grid[data-size="12"] { grid-template-columns: repeat(12, 1fr); }
+.grid[data-size="13"] { grid-template-columns: repeat(13, 1fr); }
+.grid[data-size="14"] { grid-template-columns: repeat(14, 1fr); }
+.grid[data-size="15"] { grid-template-columns: repeat(15, 1fr); }
+
+/* Ajuste do tamanho dos emojis baseado no tamanho do grid */
+.grid[data-size="7"] .tile,
+.grid[data-size="8"] .tile { font-size: 2rem; }
+
+.grid[data-size="9"] .tile,
+.grid[data-size="10"] .tile { font-size: 1.8rem; }
+
+.grid[data-size="11"] .tile,
+.grid[data-size="12"] .tile { font-size: 1.6rem; }
+
+.grid[data-size="13"] .tile,
+.grid[data-size="14"] .tile,
+.grid[data-size="15"] .tile { font-size: 1.4rem; }
+
+.tile {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-background-hover);
+  border-radius: var(--border-radius-sm);
+  border: 1px solid var(--color-secondary);
+  transition: all 0.3s ease;
+}
+
+.tile:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 15px var(--glow-secondary);
+}
+
+/* Cabeçalho - 15% da altura */
+.header-container {
+  flex: 0 0 15%;
+  display: flex;
+  flex-direction: column;
+  padding: 0.25rem;
+  min-height: fit-content;
+}
+
+.header-container h1 {
+  font-size: 0.95rem;
+  margin: 0;
+  line-height: 1.1;
+}
+
+.level-story {
+  font-size: 0.75rem;
+  margin: 0.15rem 0;
+  line-height: 1.1;
+  opacity: 0.8;
+}
+
+.button-container {
+  display: flex;
+  gap: 0.35rem;
+  margin-top: 0.15rem;
+}
+
+.button-container button {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.8rem;
+}
+
+/* Container de informações - 85% da altura */
+.info-container {
+  flex: 0 0 85%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Objetivos - ocupam o espaço disponível */
+.objectives {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  padding: 0.2rem;
+  overflow-y: auto;
+}
+
+.objective {
+  flex: 0 0 auto;
+  padding: 0.2rem;
+  margin-bottom: 0.1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 4px;
+}
+
+.objective-header {
+  padding: 0.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.8rem;
+}
+
+.objective-description {
+  font-size: 0.7rem;
+  line-height: 1.1;
+  padding: 0 0.2rem;
+}
+
+/* Container de movimentos - altura fixa */
+.moves-container {
+  flex: 0 0 auto;
+  padding: 0.2rem;
+  margin-top: 0.15rem;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 4px;
+  font-size: 0.8rem;
+}
+
+/* Grid do jogo */
+.grid-container {
+  grid-area: grid;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+/* Media query para telas menores */
+@media (max-width: 1023px) {
+  .game-container {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+    grid-template-areas: 
+      "info"
+      "grid";
+    height: 100%;
+    gap: var(--spacing-sm);
+    padding-top: 0.5rem;
+  }
+
+  .info-section {
+    height: auto;
+    max-height: 35vh;
+    margin: 0 auto;
+    width: 95%;
+  }
+
+  .header-container {
+    flex: 0 0 auto;
+    padding: var(--spacing-xs);
+  }
+
+  .header-container h1 {
+    font-size: var(--font-size-md);
+  }
+
+  .level-story {
+    font-size: var(--font-size-xs);
+  }
+
+  .button-container button {
+    padding: var(--spacing-xs) var(--spacing-sm);
+    font-size: var(--font-size-xs);
+  }
+
+  .info-container {
+    flex: 1;
+  }
+
+  .objective {
+    padding: var(--spacing-xs);
+  }
+
+  .objective-header {
+    font-size: var(--font-size-xs);
+  }
+
+  .objective-description {
+    font-size: var(--font-size-xs);
+  }
+
+  .grid-container {
+    height: 65vh;
+  }
+
+  .grid {
+    height: 95%;
+    width: 95%;
+    margin: 0 auto;
+    gap: var(--spacing-xs);
+  }
+
+  .tile {
+    font-size: clamp(var(--font-size-xs), 1.8vw, var(--font-size-md));
+  }
+}
+
+/* Media query para telas maiores */
 @media (min-width: 1024px) {
   .game-container {
     display: grid;
     grid-template-columns: 400px 1fr;
     grid-template-areas: "info grid";
-    gap: 2rem;
+    gap: var(--spacing-lg);
     align-items: center;
     justify-content: center;
     min-height: calc(100vh - 4rem);
+    padding: var(--spacing-md);
   }
 
   .info-section {
@@ -279,6 +441,7 @@ button:not(:disabled):hover {
     display: flex;
     flex-direction: column;
     justify-content: center;
+    max-width: 400px;
   }
 
   .grid-container {
@@ -286,19 +449,110 @@ button:not(:disabled):hover {
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 100%;
     height: 100%;
-    aspect-ratio: 1;
-    max-width: min(80vh, 100%);
-    max-height: min(80vh, 100%);
   }
 
   .grid {
-    width: 100%;
-    height: 100%;
-    max-width: 100%;
-    max-height: 100%;
+    max-width: 90vh;
+    max-height: 90vh;
+    gap: var(--spacing-sm);
   }
+
+  .tile {
+    font-size: clamp(var(--font-size-sm), 2.5vw, var(--font-size-xl));
+  }
+
+  .objective:hover {
+    transform: translateX(4px);
+    box-shadow: 0 0 15px var(--glow-secondary);
+  }
+
+  .button-container button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 0 20px var(--glow-primary);
+  }
+}
+
+/* Animações */
+@keyframes glowPulse {
+  0% {
+    box-shadow: 
+      0 0 10px var(--glow-primary),
+      0 0 20px var(--glow-secondary);
+  }
+  50% {
+    box-shadow: 
+      0 0 20px var(--glow-primary),
+      0 0 40px var(--glow-secondary);
+  }
+  100% {
+    box-shadow: 
+      0 0 10px var(--glow-primary),
+      0 0 20px var(--glow-secondary);
+  }
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+/* Classes de estado */
+.completed {
+  border-color: var(--color-success) !important;
+  color: var(--color-success) !important;
+}
+
+.error {
+  border-color: var(--color-error) !important;
+  color: var(--color-error) !important;
+}
+
+.warning {
+  border-color: var(--color-warning) !important;
+  color: var(--color-warning) !important;
+}
+
+.disabled {
+  opacity: 0.5;
+  cursor: not-allowed !important;
+  pointer-events: none;
+}
+
+/* Efeitos de hover e focus */
+.interactive:hover {
+  transform: scale(1.02);
+  transition: transform 0.2s ease;
+}
+
+.interactive:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--color-primary);
+}
+
+/* Utilitários */
+.glow {
+  animation: glowPulse 2s infinite;
+}
+
+.bounce {
+  animation: bounce 2s infinite;
+}
+
+.blur-bg {
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.gradient-text {
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .header-container {
@@ -503,6 +757,23 @@ button:not(:disabled):hover {
   min-width: 80px;
   text-align: center;
   margin-left: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.objective-points {
+  font-size: 0.8em;
+  color: #ffd700;
+  padding: 0.1rem 0.5rem;
+  background: rgba(255, 215, 0, 0.1);
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.extreme-mode .objective-points {
+  color: #ff3333;
+  background: rgba(255, 51, 51, 0.1);
 }
 
 .objective.completed .objective-progress {
@@ -1356,113 +1627,96 @@ button:not(:disabled):hover {
   }
 }
 
-/* Estilo especial para o emoji especial */
-.tile[data-special="true"] {
-  background: rgba(20, 28, 36, 0.95);
-  border: 2px solid rgba(0, 188, 212, 0.4);
-  box-shadow: 
-    0 0 10px rgba(0, 188, 212, 0.2),
-    inset 0 0 15px rgba(0, 188, 212, 0.1);
-  position: relative;
-  overflow: hidden;
-  border-radius: 0.5rem;
+/* Estilos específicos para modo extremo */
+.game-board .extreme-mode {
+  background: linear-gradient(rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.85)),
+              radial-gradient(circle at center, rgba(255, 0, 0, 0.3), transparent 70%));
 }
 
-/* Efeito de brilho pulsante suave */
-.tile[data-special="true"]::before {
-  content: '';
-  position: absolute;
-  inset: -2px;
-  background: radial-gradient(
-    circle at center,
-    rgba(0, 188, 212, 0.15) 0%,
-    rgba(0, 229, 255, 0.1) 30%,
-    transparent 70%
-  );
-  animation: specialPulse 3s ease-in-out infinite;
-  z-index: -1;
+.game-board .extreme-mode .grid {
+  border: 2px solid rgba(255, 0, 0, 0.3);
+  box-shadow: 0 0 15px rgba(255, 0, 0, 0.2);
 }
 
-/* Borda brilhante estática */
-.tile[data-special="true"]::after {
-  content: '';
-  position: absolute;
-  inset: -1px;
-  background: linear-gradient(
-    135deg,
-    transparent 20%,
-    rgba(0, 188, 212, 0.1) 40%,
-    rgba(0, 229, 255, 0.2) 50%,
-    rgba(0, 188, 212, 0.1) 60%,
-    transparent 80%
-  );
-  z-index: -1;
-  opacity: 0.5;
+.game-board .extreme-mode .tile {
+  background: rgba(40, 0, 0, 0.6);
+  border: 1px solid rgba(255, 0, 0, 0.2);
 }
 
-/* Animação de pulso suave */
-@keyframes specialPulse {
-  0%, 100% {
-    opacity: 0.3;
-    transform: scale(1);
+.game-board .extreme-mode .tile:hover {
+  background: rgba(60, 0, 0, 0.8);
+  box-shadow: 0 0 10px rgba(255, 0, 0, 0.3);
+}
+
+.game-board .extreme-mode .tile.selected {
+  background: rgba(80, 0, 0, 0.9);
+  border-color: rgba(255, 0, 0, 0.5);
+  box-shadow: 0 0 15px rgba(255, 0, 0, 0.4);
+}
+
+.game-board .extreme-mode .possible-match {
+  animation: extremePossibleMatch 1s ease-in-out infinite alternate;
+}
+
+.game-board .extreme-mode .info-section {
+  background: rgba(40, 0, 0, 0.6);
+  border: 1px solid rgba(255, 0, 0, 0.2);
+}
+
+.game-board .extreme-mode .objective {
+  background: rgba(60, 0, 0, 0.4);
+  border: 1px solid rgba(255, 0, 0, 0.2);
+}
+
+.game-board .extreme-mode .objective.active {
+  background: rgba(80, 0, 0, 0.6);
+  border: 1px solid rgba(255, 0, 0, 0.4);
+}
+
+.game-board .extreme-mode .objective-header {
+  background: rgba(100, 0, 0, 0.4);
+}
+
+.game-board .extreme-mode .moves-container {
+  background: rgba(60, 0, 0, 0.4);
+  border: 1px solid rgba(255, 0, 0, 0.2);
+}
+
+@keyframes extremePossibleMatch {
+  from {
+    box-shadow: 0 0 3px #ff3333,
+                0 0 6px #ff3333;
+    border-color: #ff3333;
+    opacity: 0.6;
   }
-  50% {
-    opacity: 0.5;
-    transform: scale(1.02);
-  }
-}
-
-/* Hover effect suave */
-.tile[data-special="true"]:hover {
-  transform: translateY(-2px) scale(1.05);
-  border-color: rgba(0, 188, 212, 0.5);
-  box-shadow: 
-    0 0 15px rgba(0, 188, 212, 0.25),
-    inset 0 0 20px rgba(0, 188, 212, 0.15);
-  transition: all 0.3s ease-out;
-}
-
-/* Efeito de match especial suave */
-.tile[data-special="true"].match {
-  animation: 
-    specialMatch 0.6s ease-in-out forwards,
-    specialGlow 0.6s ease-in-out;
-  z-index: 3;
-}
-
-@keyframes specialMatch {
-  0% {
-    transform: scale(1);
-    filter: brightness(1.1) saturate(1.1);
+  to {
+    box-shadow: 0 0 10px #ff3333,
+                0 0 15px #ff3333;
+    border-color: #ff3333;
     opacity: 1;
   }
-  40% {
-    transform: scale(1.15);
-    filter: brightness(1.3) saturate(1.3);
-    opacity: 0.9;
-  }
-  100% {
-    transform: scale(0);
-    filter: brightness(1.5) saturate(1.5) blur(3px);
-    opacity: 0;
-  }
 }
 
-@keyframes specialGlow {
+.game-board .extreme-mode .match {
+  animation: extremeGlow 1.5s ease-in-out;
+  box-shadow: 0 0 10px #fff,
+              0 0 20px #ff3333,
+              0 0 30px #ff3333;
+}
+
+@keyframes extremeGlow {
   0% {
-    box-shadow: 
-      0 0 10px rgba(0, 188, 212, 0.2),
-      0 0 20px rgba(0, 188, 212, 0.1);
+    box-shadow: 0 0 5px #fff,
+                0 0 10px #ff3333;
   }
   50% {
-    box-shadow: 
-      0 0 20px rgba(0, 188, 212, 0.4),
-      0 0 40px rgba(0, 188, 212, 0.2);
+    box-shadow: 0 0 10px #fff,
+                0 0 20px #ff3333,
+                0 0 30px #ff3333;
   }
   100% {
-    box-shadow: 
-      0 0 15px rgba(0, 188, 212, 0.3),
-      0 0 30px rgba(0, 188, 212, 0.15);
+    box-shadow: 0 0 5px #fff,
+                0 0 10px #ff3333;
   }
 }
 
@@ -1592,4 +1846,2133 @@ button:not(:disabled):hover {
   transform: scale(1.1);
   background: rgba(13, 17, 23, 0.9);
   box-shadow: 0 0 15px var(--glow-primary);
+}
+
+.extreme-badge {
+  background: linear-gradient(135deg, #7c3aed 0%, #4c1d95 100%);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  font-weight: bold;
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  margin-left: 1rem;
+  box-shadow: 0 0 10px rgba(124,58,237,0.3);
+  animation: glowPulse 2s ease-in-out infinite;
+}
+
+@keyframes glowPulse {
+  0%, 100% {
+    box-shadow: 0 0 10px rgba(124,58,237,0.3);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(124,58,237,0.5);
+  }
+}
+
+/* Special Emoji Animation */
+@keyframes specialGlow {
+  0%, 100% {
+    filter: brightness(1.2) drop-shadow(0 0 3px rgba(255, 255, 255, 0.7));
+    transform: scale(1);
+  }
+  50% {
+    filter: brightness(1.5) drop-shadow(0 0 5px rgba(255, 255, 255, 0.9));
+    transform: scale(1.05);
+  }
+}
+
+.special-emoji {
+  animation: specialGlow 2s ease-in-out infinite;
+  position: relative;
+  z-index: 1;
+  font-size: 1.2em;
+}
+
+/* Extreme mode styles */
+.extreme-mode {
+  background: linear-gradient(rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.85)),
+              radial-gradient(circle at center, rgba(255, 0, 0, 0.3), transparent 70%));
+}
+
+.extreme-mode .grid {
+  border: 2px solid rgba(255, 0, 0, 0.3);
+  box-shadow: 0 0 15px rgba(255, 0, 0, 0.2);
+}
+
+.extreme-mode .tile {
+  background: rgba(40, 0, 0, 0.6);
+  border: 1px solid rgba(255, 0, 0, 0.2);
+}
+
+.extreme-mode .tile:hover {
+  background: rgba(60, 0, 0, 0.8);
+  box-shadow: 0 0 10px rgba(255, 0, 0, 0.3);
+}
+
+.extreme-mode .tile.selected {
+  background: rgba(80, 0, 0, 0.9);
+  border-color: rgba(255, 0, 0, 0.5);
+  box-shadow: 0 0 15px rgba(255, 0, 0, 0.4);
+}
+
+.extreme-mode .possible-match {
+  animation: extremePossibleMatch 1s ease-in-out infinite alternate;
+}
+
+@keyframes extremePossibleMatch {
+  from {
+    box-shadow: 0 0 3px #ff3333,
+                0 0 6px #ff3333;
+    border-color: #ff3333;
+    opacity: 0.6;
+  }
+  to {
+    box-shadow: 0 0 10px #ff3333,
+                0 0 15px #ff3333;
+    border-color: #ff3333;
+    opacity: 1;
+  }
+}
+
+.extreme-mode .match {
+  animation: extremeGlow 1.5s ease-in-out;
+  box-shadow: 0 0 10px #fff,
+              0 0 20px #ff3333,
+              0 0 30px #ff3333;
+}
+
+@keyframes extremeGlow {
+  0% {
+    box-shadow: 0 0 5px #fff,
+                0 0 10px #ff3333;
+  }
+  50% {
+    box-shadow: 0 0 10px #fff,
+                0 0 20px #ff3333,
+                0 0 30px #ff3333;
+  }
+  100% {
+    box-shadow: 0 0 5px #fff,
+                0 0 10px #ff3333;
+  }
+}
+
+/* Animações */
+@keyframes shake {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  10%, 90% { transform: translate3d(-1px, 0, 0); }
+  20%, 80% { transform: translate3d(2px, 0, 0); }
+  30%, 50%, 70% { transform: translate3d(-2px, 0, 0); }
+  40%, 60% { transform: translate3d(2px, 0, 0); }
+}
+
+.shake {
+  animation: shake 0.2s cubic-bezier(.36,.07,.19,.97) both;
+  will-change: transform;
+}
+
+@keyframes pop {
+  0% { transform: scale(0.3); opacity: 0; }
+  50% { transform: scale(1.2); opacity: 0.8; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.pop {
+  animation: pop 0.2s ease-out forwards;
+  will-change: transform, opacity;
+}
+
+@keyframes fall {
+  0% { 
+    transform: translateY(-100%); 
+    opacity: 0;
+  }
+  100% { 
+    transform: translateY(0); 
+    opacity: 1;
+  }
+}
+
+.fall {
+  animation: fall 0.3s ease-out forwards;
+  will-change: transform, opacity;
+}
+
+@keyframes match {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.2); opacity: 0.8; }
+  100% { transform: scale(0); opacity: 0; }
+}
+
+.match {
+  animation: match 0.2s ease-in-out forwards;
+  will-change: transform, opacity;
+}
+
+.progress-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.matches-progress {
+  font-weight: bold;
+}
+
+.objective-points {
+  font-size: 0.8em;
+  color: #ffd700;
+  padding: 0.25rem 0.5rem;
+  background: rgba(255, 215, 0, 0.1);
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.extreme-mode .objective-points {
+  color: #ff3333;
+  background: rgba(255, 51, 51, 0.1);
+}
+
+.objective-progress {
+  padding: 0.5rem;
+  background: rgba(0, 188, 212, 0.1);
+  border-radius: 12px;
+  font-size: clamp(0.75rem, 1.5vw, 0.9rem);
+  color: #00bcd4;
+  min-width: 120px;
+  margin-left: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  border: 1px solid rgba(0, 188, 212, 0.2);
+}
+
+/* Estilização especial para objetivos no modo extremo */
+.extreme-mode .objective {
+  background: linear-gradient(
+    135deg,
+    rgba(80, 0, 0, 0.4) 0%,
+    rgba(40, 0, 0, 0.6) 100%
+  );
+  border: 1px solid rgba(255, 51, 51, 0.3);
+  box-shadow: 0 0 15px rgba(255, 51, 51, 0.1);
+  transition: all 0.3s ease;
+}
+
+.extreme-mode .objective.active {
+  background: linear-gradient(
+    135deg,
+    rgba(120, 0, 0, 0.4) 0%,
+    rgba(80, 0, 0, 0.6) 100%
+  );
+  border: 1px solid rgba(255, 51, 51, 0.5);
+  box-shadow: 
+    0 0 20px rgba(255, 51, 51, 0.2),
+    inset 0 0 30px rgba(255, 51, 51, 0.1);
+  transform: translateX(5px);
+}
+
+.extreme-mode .objective-header {
+  background: rgba(80, 0, 0, 0.4);
+  padding: 0.75rem;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 51, 51, 0.2);
+}
+
+.extreme-mode .objective-star {
+  background: linear-gradient(135deg, #ff3333, #cc0000);
+  border: 1px solid rgba(255, 51, 51, 0.4);
+  box-shadow: 0 0 10px rgba(255, 51, 51, 0.3);
+  animation: extremePulse 2s infinite;
+}
+
+.extreme-mode .progress-container {
+  background: rgba(80, 0, 0, 0.3);
+  padding: 0.75rem;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 51, 51, 0.2);
+  width: 100%;
+}
+
+.extreme-mode .matches-progress {
+  color: #ff3333;
+  font-size: 1.1em;
+  font-weight: bold;
+  text-shadow: 0 0 5px rgba(255, 51, 51, 0.5);
+  margin-bottom: 0.25rem;
+}
+
+.extreme-mode .objective-points {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 51, 51, 0.15) 0%,
+    rgba(255, 51, 51, 0.25) 100%
+  );
+  border: 1px solid rgba(255, 51, 51, 0.3);
+  padding: 0.5rem 1rem;
+  font-weight: bold;
+  color: #ff3333;
+  text-shadow: 0 0 5px rgba(255, 51, 51, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.extreme-mode .objective-points::before {
+  content: '🔥';
+  font-size: 1.1em;
+}
+
+.extreme-mode .objective-description {
+  color: #ff9999;
+  border-left: 2px solid rgba(255, 51, 51, 0.4);
+  padding: 0.5rem 1rem;
+  margin-top: 0.5rem;
+  font-size: 0.9em;
+  line-height: 1.4;
+}
+
+/* Animação de pulso para o modo extremo */
+@keyframes extremePulse {
+  0%, 100% {
+    box-shadow: 0 0 10px rgba(255, 51, 51, 0.3);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(255, 51, 51, 0.5);
+    transform: scale(1.02);
+  }
+}
+
+/* Hover effects */
+.extreme-mode .objective:hover {
+  transform: translateX(8px);
+  box-shadow: 
+    0 0 25px rgba(255, 51, 51, 0.2),
+    inset 0 0 40px rgba(255, 51, 51, 0.1);
+}
+
+/* Estilo para objetivo completado no modo extremo */
+.extreme-mode .objective.completed {
+  background: linear-gradient(
+    135deg,
+    rgba(0, 80, 0, 0.4) 0%,
+    rgba(0, 40, 0, 0.6) 100%
+  );
+  border: 1px solid rgba(0, 255, 0, 0.3);
+}
+
+.extreme-mode .objective.completed .objective-star {
+  background: linear-gradient(135deg, #00cc00, #008000);
+  border: 1px solid rgba(0, 255, 0, 0.4);
+  box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
+}
+
+.extreme-mode .objective.completed .matches-progress,
+.extreme-mode .objective.completed .objective-points {
+  color: #00cc00;
+  text-shadow: 0 0 5px rgba(0, 255, 0, 0.3);
+}
+
+/* Responsividade para telas menores */
+@media (max-width: 768px) {
+  .extreme-mode .objective {
+    padding: 0.75rem;
+  }
+
+  .extreme-mode .objective-header {
+    padding: 0.5rem;
+  }
+
+  .extreme-mode .progress-container {
+    padding: 0.5rem;
+  }
+
+  .extreme-mode .objective-points {
+    padding: 0.25rem 0.75rem;
+    font-size: 0.85em;
+  }
+
+  .extreme-mode .objective-description {
+    padding: 0.25rem 0.75rem;
+    font-size: 0.8em;
+  }
+}
+
+/* Adicionar estilos para pontuação alcançada */
+.extreme-mode .objective-points.achieved {
+  background: linear-gradient(
+    135deg,
+    rgba(0, 255, 0, 0.15) 0%,
+    rgba(0, 255, 0, 0.25) 100%
+  );
+  border: 1px solid rgba(0, 255, 0, 0.3);
+  color: #00ff00;
+  text-shadow: 0 0 5px rgba(0, 255, 0, 0.3);
+  animation: achievedPulse 2s infinite;
+}
+
+.extreme-mode .objective-points.achieved::before {
+  content: '✨';
+  animation: achievedSpin 3s linear infinite;
+}
+
+@keyframes achievedPulse {
+  0%, 100% {
+    box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(0, 255, 0, 0.5);
+    transform: scale(1.02);
+  }
+}
+
+@keyframes achievedSpin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Estilos para o painel de pontos */
+.points-panel {
+  background: rgba(80, 0, 0, 0.4);
+  border: 1px solid rgba(255, 51, 51, 0.3);
+  border-radius: 12px;
+  padding: 1rem;
+  margin: 1rem 0;
+  box-shadow: 0 0 15px rgba(255, 51, 51, 0.1);
+}
+
+.points-panel-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding-bottom: 0.75rem;
+  margin-bottom: 0.75rem;
+  border-bottom: 1px solid rgba(255, 51, 51, 0.3);
+  font-size: 1rem;
+  font-weight: bold;
+  color: #ff3333;
+}
+
+.points-icon {
+  font-size: 1.2em;
+  animation: pointsIconPulse 2s infinite;
+}
+
+.points-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 0.75rem;
+  max-height: 200px;
+  overflow-y: auto;
+  padding-right: 0.5rem;
+}
+
+.points-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.5rem;
+  background: rgba(255, 51, 51, 0.1);
+  border: 1px solid rgba(255, 51, 51, 0.2);
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.points-item:hover {
+  transform: translateY(-2px);
+  background: rgba(255, 51, 51, 0.15);
+  box-shadow: 0 0 10px rgba(255, 51, 51, 0.2);
+}
+
+.points-emoji {
+  font-size: 1.5em;
+}
+
+.points-value {
+  font-weight: bold;
+  color: #ff3333;
+  font-size: 0.9em;
+}
+
+.points-name {
+  font-size: 0.75em;
+  color: rgba(255, 255, 255, 0.8);
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+}
+
+/* Scrollbar personalizada para o grid de pontos */
+.points-grid::-webkit-scrollbar {
+  width: 8px;
+}
+
+.points-grid::-webkit-scrollbar-track {
+  background: rgba(255, 51, 51, 0.1);
+  border-radius: 4px;
+}
+
+.points-grid::-webkit-scrollbar-thumb {
+  background: rgba(255, 51, 51, 0.3);
+  border-radius: 4px;
+}
+
+.points-grid::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 51, 51, 0.4);
+}
+
+@keyframes pointsIconPulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 1;
+  }
+}
+
+/* Ajustes responsivos */
+@media (max-width: 768px) {
+  .points-panel {
+    padding: 0.75rem;
+    margin: 0.75rem 0;
+  }
+
+  .points-grid {
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 0.5rem;
+    max-height: 150px;
+  }
+
+  .points-item {
+    padding: 0.35rem;
+  }
+
+  .points-emoji {
+    font-size: 1.25em;
+  }
+
+  .points-value {
+    font-size: 0.8em;
+  }
+
+  .points-name {
+    font-size: 0.7em;
+  }
+}
+
+/* Ajuste dos botões no modo extremo */
+.extreme-mode .button-container {
+  display: flex;
+  justify-content: space-between; /* Muda para space-between para separar os botões */
+  width: 100%; /* Garante que ocupe toda a largura */
+  padding: 0 0.5rem; /* Adiciona um pequeno padding nas laterais */
+}
+
+.extreme-mode .magic-button,
+.extreme-mode .back-button {
+  flex: 0 0 auto; /* Evita que os botões cresçam */
+  min-width: auto; /* Remove a largura mínima */
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+  height: 24px; /* Altura fixa ao invés de min-height */
+  display: inline-flex; /* Mudado para inline-flex */
+  align-items: center;
+  justify-content: center;
+  background: rgba(80, 0, 0, 0.4);
+  border: 1px solid rgba(255, 51, 51, 0.3);
+  border-radius: 4px;
+  color: #ff3333;
+  transition: all 0.2s ease;
+  text-shadow: 0 0 5px rgba(255, 51, 51, 0.3);
+  box-shadow: 0 0 10px rgba(255, 51, 51, 0.1);
+  white-space: nowrap; /* Evita quebra de linha */
+  flex: 0 0 auto; /* Evita que os botões estichem */
+}
+
+/* Ajuste responsivo para os botões */
+@media (min-width: 1024px) {
+  .extreme-mode .magic-button,
+  .extreme-mode .back-button {
+    padding: 0.3rem 0.75rem;
+    font-size: 0.8rem;
+    height: 28px;
+  }
+}
+
+@media (max-width: 480px) {
+  .extreme-mode .magic-button,
+  .extreme-mode .back-button {
+    padding: 0.2rem 0.4rem;
+    font-size: 0.7rem;
+    height: 22px;
+  }
+}
+
+/* Melhorias na barra lateral do modo extremo */
+.extreme-mode .info-section {
+  max-width: 330px;
+  margin-top: 1rem; /* Adiciona margem no topo */
+  padding: 0.75rem;
+  background: linear-gradient(145deg, rgba(20, 0, 0, 0.95), rgba(40, 0, 0, 0.98));
+  border: 1px solid rgba(255, 51, 51, 0.4);
+  box-shadow: 0 0 20px rgba(255, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  position: relative; /* Garante posicionamento correto */
+  top: 1rem; /* Desce a barra um pouco */
+}
+
+/* Header mais destacado */
+.extreme-mode .header-container {
+  padding: 0.5rem;
+  background: linear-gradient(145deg, rgba(100, 0, 0, 0.6), rgba(60, 0, 0, 0.8));
+  border: 1px solid rgba(255, 51, 51, 0.4);
+  border-radius: 8px;
+  margin-bottom: 0.5rem;
+}
+
+/* Painel de pontuação mais organizado */
+.extreme-mode .points-panel {
+  background: linear-gradient(145deg, rgba(60, 0, 0, 0.6), rgba(40, 0, 0, 0.8));
+  border: 1px solid rgba(255, 51, 51, 0.3);
+  border-radius: 8px;
+  padding: 0.5rem;
+  margin: 0.25rem 0;
+}
+
+.extreme-mode .points-panel-header {
+  background: rgba(255, 51, 51, 0.1);
+  padding: 0.4rem;
+  border-radius: 6px;
+  margin-bottom: 0.5rem;
+  border: 1px solid rgba(255, 51, 51, 0.2);
+}
+
+.extreme-mode .points-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.4rem;
+  max-height: 120px;
+  overflow-y: auto;
+  padding: 0.2rem;
+}
+
+.extreme-mode .points-item {
+  background: rgba(255, 51, 51, 0.1);
+  border: 1px solid rgba(255, 51, 51, 0.2);
+  border-radius: 6px;
+  padding: 0.3rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
+  transition: all 0.2s ease;
+}
+
+.extreme-mode .points-item:hover {
+  background: rgba(255, 51, 51, 0.2);
+  transform: translateY(-2px);
+}
+
+/* Objetivos mais organizados */
+.extreme-mode .objectives {
+  background: linear-gradient(145deg, rgba(60, 0, 0, 0.6), rgba(40, 0, 0, 0.8));
+  border: 1px solid rgba(255, 51, 51, 0.3);
+  border-radius: 8px;
+  padding: 0.5rem;
+  gap: 0.4rem;
+  max-height: 250px;
+  overflow-y: auto;
+}
+
+.extreme-mode .objective {
+  background: rgba(255, 51, 51, 0.1);
+  border: 1px solid rgba(255, 51, 51, 0.2);
+  border-radius: 6px;
+  padding: 0.4rem;
+  transition: all 0.2s ease;
+}
+
+.extreme-mode .objective.active {
+  background: linear-gradient(145deg, rgba(100, 0, 0, 0.4), rgba(60, 0, 0, 0.6));
+  border: 1px solid rgba(255, 51, 51, 0.4);
+  transform: translateX(4px);
+}
+
+.extreme-mode .objective-header {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.3rem;
+}
+
+.extreme-mode .objective-star {
+  background: linear-gradient(145deg, #ff3333, #cc0000);
+  padding: 0.2rem 0.4rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+}
+
+.extreme-mode .objective-progress {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.2rem;
+  background: rgba(255, 51, 51, 0.1);
+  padding: 0.3rem;
+  border-radius: 4px;
+}
+
+/* Container de movimentos mais destacado */
+.extreme-mode .moves-container {
+  background: linear-gradient(145deg, rgba(100, 0, 0, 0.6), rgba(60, 0, 0, 0.8));
+  border: 1px solid rgba(255, 51, 51, 0.4);
+  border-radius: 8px;
+  padding: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.extreme-mode .moves-count {
+  background: rgba(255, 51, 51, 0.1);
+  border: 1px solid rgba(255, 51, 51, 0.2);
+  border-radius: 6px;
+  padding: 0.4rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+}
+
+/* Scrollbars personalizadas */
+.extreme-mode .objectives::-webkit-scrollbar,
+.extreme-mode .points-grid::-webkit-scrollbar {
+  width: 6px;
+}
+
+.extreme-mode .objectives::-webkit-scrollbar-track,
+.extreme-mode .points-grid::-webkit-scrollbar-track {
+  background: rgba(255, 51, 51, 0.1);
+  border-radius: 3px;
+}
+
+.extreme-mode .objectives::-webkit-scrollbar-thumb,
+.extreme-mode .points-grid::-webkit-scrollbar-thumb {
+  background: rgba(255, 51, 51, 0.3);
+  border-radius: 3px;
+}
+
+.extreme-mode .objectives::-webkit-scrollbar-thumb:hover,
+.extreme-mode .points-grid::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 51, 51, 0.4);
+}
+
+/* Ajustes responsivos mantidos e melhorados */
+@media (max-width: 1023px) {
+  .extreme-mode .info-section {
+    max-width: 100%;
+    margin-bottom: 0.5rem;
+  }
+
+  .extreme-mode .points-grid {
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+  }
+
+  .extreme-mode .objectives {
+    max-height: 200px;
+  }
+}
+
+/* Melhorias visuais para o modo extremo */
+.extreme-mode .info-section {
+  max-width: 330px;
+  padding: 0.75rem;
+  background: linear-gradient(145deg, rgba(20, 0, 0, 0.95), rgba(40, 0, 0, 0.98));
+  border: 1px solid rgba(255, 51, 51, 0.4);
+  box-shadow: 0 0 20px rgba(255, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+/* Cabeçalho do modo extremo */
+.extreme-mode .header-container {
+  background: linear-gradient(145deg, rgba(80, 0, 0, 0.8), rgba(40, 0, 0, 0.9));
+  border: 1px solid rgba(255, 51, 51, 0.4);
+  border-radius: 8px;
+  padding: 0.75rem;
+  box-shadow: 0 2px 8px rgba(255, 0, 0, 0.1);
+}
+
+.extreme-mode .header-container h1 {
+  color: #ff3333;
+  font-size: 1.2rem;
+  text-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+  margin-bottom: 0.5rem;
+}
+
+.extreme-mode .level-story {
+  color: #ff9999;
+  font-size: 0.8rem;
+  line-height: 1.4;
+  margin-bottom: 0.75rem;
+}
+
+/* Badge do modo extremo */
+.extreme-mode .extreme-badge {
+  background: linear-gradient(135deg, #ff3333, #990000);
+  color: white;
+  padding: 0.3rem 0.6rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+  text-align: center;
+  box-shadow: 0 2px 4px rgba(255, 0, 0, 0.2);
+}
+
+/* Painel de pontuação */
+.extreme-mode .points-panel {
+  background: linear-gradient(145deg, rgba(60, 0, 0, 0.8), rgba(30, 0, 0, 0.9));
+  border: 1px solid rgba(255, 51, 51, 0.3);
+  border-radius: 8px;
+  padding: 0.75rem;
+}
+
+.extreme-mode .points-panel-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #ff3333;
+  font-size: 0.9rem;
+  font-weight: bold;
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid rgba(255, 51, 51, 0.3);
+}
+
+.extreme-mode .points-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.5rem;
+  max-height: 150px;
+  overflow-y: auto;
+  padding: 0.25rem;
+}
+
+.extreme-mode .points-item {
+  background: rgba(255, 51, 51, 0.1);
+  border: 1px solid rgba(255, 51, 51, 0.2);
+  border-radius: 6px;
+  padding: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+/* Objetivos */
+.extreme-mode .objectives {
+  background: linear-gradient(145deg, rgba(60, 0, 0, 0.8), rgba(30, 0, 0, 0.9));
+  border: 1px solid rgba(255, 51, 51, 0.3);
+  border-radius: 8px;
+  padding: 0.75rem;
+  gap: 0.5rem;
+}
+
+.extreme-mode .objective {
+  background: rgba(40, 0, 0, 0.6);
+  border: 1px solid rgba(255, 51, 51, 0.2);
+  border-radius: 6px;
+  padding: 0.5rem;
+}
+
+.extreme-mode .objective.active {
+  background: linear-gradient(145deg, rgba(80, 0, 0, 0.6), rgba(40, 0, 0, 0.8));
+  border: 1px solid rgba(255, 51, 51, 0.4);
+  box-shadow: 0 2px 8px rgba(255, 0, 0, 0.15);
+}
+
+.extreme-mode .objective.completed {
+  background: linear-gradient(145deg, rgba(0, 60, 0, 0.6), rgba(0, 30, 0, 0.8));
+  border: 1px solid rgba(0, 255, 0, 0.3);
+}
+
+/* Contador de movimentos */
+.extreme-mode .moves-container {
+  background: linear-gradient(145deg, rgba(80, 0, 0, 0.8), rgba(40, 0, 0, 0.9));
+  border: 1px solid rgba(255, 51, 51, 0.4);
+  border-radius: 8px;
+  padding: 0.75rem;
+}
+
+.extreme-mode .moves-count {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 0.5rem;
+  background: rgba(255, 51, 51, 0.1);
+  border: 1px solid rgba(255, 51, 51, 0.2);
+  border-radius: 6px;
+}
+
+.extreme-mode .moves-icon {
+  font-size: 1.2rem;
+  color: #ff3333;
+}
+
+.extreme-mode .moves-number {
+  font-size: 1.3rem;
+  font-weight: bold;
+  color: #ff3333;
+  text-shadow: 0 0 8px rgba(255, 0, 0, 0.4);
+}
+
+.extreme-mode .moves-label {
+  font-size: 0.8rem;
+  color: #ff9999;
+}
+
+/* Botões */
+.extreme-mode .button-container {
+  display: flex;
+  justify-content: space-between; /* Centraliza os botões */
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.25rem;
+}
+
+.extreme-mode .magic-button,
+.extreme-mode .back-button {
+  flex: 0 1 auto; /* Remove o flex: 1 para que os botões não ocupem todo o espaço */
+  min-width: 100px; /* Define uma largura mínima para os botões */
+  background: linear-gradient(145deg, rgba(80, 0, 0, 0.8), rgba(40, 0, 0, 0.9));
+  border: 1px solid rgba(255, 51, 51, 0.4);
+  color: #ff3333;
+  padding: 0.4rem 0.8rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  transition: all 0.2s ease;
+}
+
+.extreme-mode .magic-button:hover,
+.extreme-mode .back-button:hover {
+  background: linear-gradient(145deg, rgba(100, 0, 0, 0.8), rgba(60, 0, 0, 0.9));
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(255, 0, 0, 0.2);
+}
+
+/* Objetivos mais compactos */
+.extreme-mode .objectives {
+  background: linear-gradient(145deg, rgba(60, 0, 0, 0.8), rgba(30, 0, 0, 0.9));
+  border: 1px solid rgba(255, 51, 51, 0.3);
+  border-radius: 8px;
+  padding: 0.5rem;
+  gap: 0.35rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.extreme-mode .objective {
+  background: rgba(40, 0, 0, 0.6);
+  border: 1px solid rgba(255, 51, 51, 0.2);
+  border-radius: 6px;
+  padding: 0.35rem;
+  min-height: 0;
+}
+
+.extreme-mode .objective-header {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem;
+}
+
+.extreme-mode .objective-star {
+  background: linear-gradient(145deg, #ff3333, #cc0000);
+  padding: 0.15rem 0.3rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  line-height: 1;
+}
+
+.extreme-mode .objective-emojis {
+  display: flex;
+  gap: 0.2rem;
+  font-size: 0.9rem;
+}
+
+.extreme-mode .objective-progress {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.15rem;
+  background: rgba(255, 51, 51, 0.1);
+  padding: 0.25rem 0.4rem;
+  border-radius: 4px;
+  min-width: 85px;
+}
+
+.extreme-mode .matches-progress {
+  font-size: 0.75rem;
+  line-height: 1;
+}
+
+.extreme-mode .objective-points {
+  font-size: 0.7rem;
+  padding: 0.15rem 0.3rem;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.extreme-mode .objective-description {
+  font-size: 0.7rem;
+  padding: 0.25rem 0.35rem;
+  line-height: 1.2;
+  color: #ff9999;
+  margin-top: 0.15rem;
+}
+
+.extreme-mode .objective.completed {
+  padding: 0.25rem;
+}
+
+.extreme-mode .objective.completed .objective-header {
+  padding: 0.2rem;
+}
+
+/* Ajuste do espaçamento geral da barra lateral */
+.extreme-mode .info-section {
+  gap: 0.5rem;
+}
+
+.extreme-mode .points-panel {
+  padding: 0.4rem;
+  margin: 0.25rem 0;
+}
+
+.extreme-mode .moves-container {
+  margin-top: 0.35rem;
+  padding: 0.4rem;
+}
+
+/* Ajustes responsivos */
+@media (max-width: 1023px) {
+  .extreme-mode .objectives {
+    padding: 0.35rem;
+    gap: 0.25rem;
+  }
+
+  .extreme-mode .objective {
+    padding: 0.25rem;
+  }
+}
+
+/* Objetivos mais compactos e modernos */
+.extreme-mode .objectives {
+  background: linear-gradient(145deg, rgba(255, 51, 51, 0.05), rgba(255, 51, 51, 0.1));
+  border: 1px solid rgba(255, 51, 51, 0.2);
+  border-radius: 8px;
+  padding: 0.4rem;
+  gap: 0.25rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.extreme-mode .objective {
+  background: transparent;
+  border: 1px solid rgba(255, 51, 51, 0.15);
+  border-radius: 6px;
+  padding: 0.25rem;
+  transition: all 0.2s ease;
+}
+
+.extreme-mode .objective:not(.active):not(.completed) {
+  opacity: 0.6;
+}
+
+.extreme-mode .objective.active {
+  background: linear-gradient(145deg, rgba(255, 51, 51, 0.1), rgba(255, 51, 51, 0.15));
+  border: 1px solid rgba(255, 51, 51, 0.3);
+  box-shadow: 0 2px 4px rgba(255, 0, 0, 0.1);
+  transform: translateX(2px);
+}
+
+.extreme-mode .objective-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.2rem;
+  padding: 0.2rem;
+}
+
+.extreme-mode .objective-star {
+  background: linear-gradient(145deg, #ff3333, #cc0000);
+  padding: 0.1rem 0.25rem;
+  border-radius: 3px;
+  font-size: 0.7rem;
+  line-height: 1;
+  box-shadow: 0 1px 3px rgba(255, 0, 0, 0.2);
+}
+
+.extreme-mode .objective-emojis {
+  display: flex;
+  gap: 0.15rem;
+  font-size: 0.85rem;
+  margin: 0 0.25rem;
+}
+
+.extreme-mode .objective-progress {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.1rem;
+  background: rgba(255, 51, 51, 0.08);
+  padding: 0.2rem 0.3rem;
+  border-radius: 3px;
+  min-width: 80px;
+  border: 1px solid rgba(255, 51, 51, 0.15);
+}
+
+.extreme-mode .matches-progress {
+  font-size: 0.7rem;
+  line-height: 1;
+  color: #ff6666;
+}
+
+.extreme-mode .objective-points {
+  font-size: 0.65rem;
+  padding: 0.1rem 0.25rem;
+  line-height: 1;
+  white-space: nowrap;
+  background: rgba(255, 51, 51, 0.08);
+  border-radius: 2px;
+  color: #ff4444;
+}
+
+.extreme-mode .objective-description {
+  font-size: 0.65rem;
+  padding: 0.2rem 0.25rem;
+  line-height: 1.2;
+  color: #ff9999;
+  margin-top: 0.1rem;
+  border-left: 2px solid rgba(255, 51, 51, 0.2);
+}
+
+.extreme-mode .objective.completed {
+  background: linear-gradient(145deg, rgba(0, 255, 0, 0.05), rgba(0, 255, 0, 0.1));
+  border: 1px solid rgba(0, 255, 0, 0.2);
+  padding: 0.25rem;
+}
+
+.extreme-mode .objective.completed .objective-star {
+  background: linear-gradient(145deg, #00cc00, #009900);
+}
+
+.extreme-mode .objective.completed .objective-progress,
+.extreme-mode .objective.completed .objective-points {
+  background: rgba(0, 255, 0, 0.08);
+  border-color: rgba(0, 255, 0, 0.15);
+  color: #00cc00;
+}
+
+.extreme-mode .objective.completed .matches-progress {
+  color: #00cc00;
+}
+
+.extreme-mode .objective.completed .objective-description {
+  color: #66cc66;
+  border-left-color: rgba(0, 255, 0, 0.2);
+}
+
+/* Efeito hover suave */
+.extreme-mode .objective:hover {
+  transform: translateX(3px);
+  border-color: rgba(255, 51, 51, 0.3);
+}
+
+.extreme-mode .objective.completed:hover {
+  border-color: rgba(0, 255, 0, 0.3);
+}
+
+/* Substituir cores verdes por azul ciano nos objetivos completados */
+.extreme-mode .objective.completed {
+  background: linear-gradient(145deg, rgba(0, 188, 212, 0.05), rgba(0, 188, 212, 0.1));
+  border: 1px solid rgba(0, 188, 212, 0.2);
+  padding: 0.25rem;
+}
+
+.extreme-mode .objective.completed .objective-star {
+  background: linear-gradient(145deg, #00bcd4, #0097a7);
+}
+
+.extreme-mode .objective.completed .objective-progress,
+.extreme-mode .objective.completed .objective-points {
+  background: rgba(0, 188, 212, 0.08);
+  border-color: rgba(0, 188, 212, 0.15);
+  color: #00bcd4;
+}
+
+.extreme-mode .objective.completed .matches-progress {
+  color: #00bcd4;
+}
+
+.extreme-mode .objective.completed .objective-description {
+  color: #4dd0e1;
+  border-left-color: rgba(0, 188, 212, 0.2);
+}
+
+.extreme-mode .objective.completed:hover {
+  border-color: rgba(0, 188, 212, 0.3);
+}
+
+/* Ajustar também onde houver outras referências ao verde */
+.extreme-mode .objective.completed {
+  background: linear-gradient(145deg, rgba(0, 60, 60, 0.6), rgba(0, 30, 30, 0.8));
+  border: 1px solid rgba(0, 188, 212, 0.3);
+}
+
+/* Ajustes sutis no header e botões */
+.extreme-mode .header-container {
+  padding: 0.5rem;
+  margin-bottom: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.extreme-mode .button-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.25rem;
+}
+
+.extreme-mode .magic-button,
+.extreme-mode .back-button {
+  flex: 1;
+  height: 28px;
+  padding: 0 0.75rem;
+  font-size: 0.8rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Ajuste do espaçamento do título */
+.extreme-mode .header-container h1 {
+  font-size: 1rem;
+  margin: 0;
+  padding: 0;
+}
+
+.extreme-mode .level-story {
+  font-size: 0.75rem;
+  margin: 0.25rem 0;
+  line-height: 1.2;
+}
+
+/* Ajuste do badge do modo extremo */
+.extreme-mode .extreme-badge {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+  margin: 0.25rem 0;
+}
+
+/* Ajuste do posicionamento da barra lateral no modo extremo */
+.extreme-mode .info-section {
+  margin-top: 2rem; /* Aumenta a margem superior */
+  padding-top: 1rem; /* Adiciona padding superior */
+}
+
+.extreme-mode .header-container {
+  margin-top: 0.5rem; /* Adiciona margem superior ao header */
+}
+
+/* Ajuste apenas dos botões no modo extremo */
+.extreme-mode .button-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.25rem;
+  height: 28px; /* Define altura fixa para o container */
+}
+
+.extreme-mode .magic-button,
+.extreme-mode .back-button {
+  height: 24px; /* Reduz altura dos botões */
+  line-height: 24px; /* Alinha o texto verticalmente */
+  padding: 0 0.75rem;
+  display: flex;
+  align-items: center;
+}
+
+/* Ajuste do componente de pontuação no modo extremo */
+.extreme-mode .points-item {
+  background: rgba(255, 51, 51, 0.1);
+  border: 1px solid rgba(255, 51, 51, 0.2);
+  border-radius: 4px;
+  padding: 0.2rem 0.4rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* Separa emoji e valor */
+  height: 24px;
+  min-width: 85px; /* Aumentado para dar mais espaço */
+  position: relative; /* Garante posicionamento correto */
+}
+
+.extreme-mode .points-emoji {
+  font-size: 1rem;
+  flex: 0 0 auto; /* Impede que o emoji encolha */
+}
+
+.extreme-mode .points-value {
+  font-size: 0.8rem;
+  color: #00bcd4;
+  flex: 0 0 auto; /* Impede que o valor encolha */
+  text-align: right; /* Alinha à direita */
+  margin-left: 1rem; /* Aumenta o espaço entre emoji e valor */
+}
+
+/* Ajusta o grid sem scroll */
+.extreme-mode .points-grid {
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.25rem;
+  padding: 0.15rem;
+  overflow: hidden; /* Remove scroll */
+  max-height: none; /* Remove limite de altura */
+}
+
+/* Estilos específicos para o modo extremo */
+.extreme-mode {
+  /* Fundo com gradiente mais dramático */
+  background: linear-gradient(
+    135deg,
+    rgba(40, 0, 0, 0.95) 0%,
+    rgba(80, 0, 0, 0.85) 50%,
+    rgba(40, 0, 0, 0.95) 100%
+  );
+}
+
+/* Badge do modo extremo melhorado */
+.extreme-badge {
+  background: linear-gradient(135deg, #ff3333, #990000);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  font-size: 0.9rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  margin: 0.5rem 0;
+  text-align: center;
+  box-shadow: 0 0 15px rgba(255, 0, 0, 0.3);
+  animation: pulseBadge 2s infinite;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Painel de pontuação redesenhado */
+.extreme-mode .points-panel {
+  background: linear-gradient(
+    145deg, 
+    rgba(20, 0, 0, 0.95) 0%,
+    rgba(40, 0, 0, 0.98) 100%
+  );
+  border: 1px solid rgba(255, 0, 0, 0.3);
+  border-radius: 0.75rem;
+  padding: 0.75rem;
+  margin: 0.5rem 0;
+  box-shadow: 
+    0 0 20px rgba(255, 0, 0, 0.15),
+    inset 0 0 30px rgba(255, 0, 0, 0.1);
+}
+
+/* Cabeçalho do painel */
+.extreme-mode .points-panel-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  margin-bottom: 0.5rem;
+  color: #ff3333;
+  font-size: 0.9rem;
+  font-weight: bold;
+}
+
+.extreme-mode .points-icon {
+  color: #ff3333;
+  font-size: 1.2rem;
+  margin-right: 0.25rem;
+}
+
+/* Grid de pontuação */
+.extreme-mode .points-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding: 0.25rem;
+  max-height: 180px;
+  overflow-y: auto;
+}
+
+/* Item individual de pontuação */
+.extreme-mode .points-item {
+  background: rgba(255, 0, 0, 0.1);
+  border: 1px solid rgba(255, 0, 0, 0.2);
+  border-radius: 0.4rem;
+  padding: 0.35rem 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 28px;
+  transition: all 0.2s ease;
+}
+
+.extreme-mode .points-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.extreme-mode .points-emoji {
+  font-size: 1.1rem;
+  filter: drop-shadow(0 0 3px rgba(255, 0, 0, 0.3));
+  margin-right: 0.5rem;
+}
+
+.extreme-mode .points-info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex: 1;
+}
+
+.extreme-mode .points-value {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #ff3333;
+  text-shadow: 0 0 5px rgba(255, 0, 0, 0.3);
+  margin-left: auto;
+}
+
+.extreme-mode .points-name {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.7);
+  margin-right: auto;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 120px;
+}
+
+/* Scrollbar personalizada */
+.extreme-mode .points-grid::-webkit-scrollbar {
+  width: 4px;
+}
+
+.extreme-mode .points-grid::-webkit-scrollbar-track {
+  background: rgba(255, 0, 0, 0.1);
+  border-radius: 2px;
+}
+
+.extreme-mode .points-grid::-webkit-scrollbar-thumb {
+  background: rgba(255, 0, 0, 0.3);
+  border-radius: 2px;
+}
+
+/* Hover effects refinados */
+.extreme-mode .points-item:hover {
+  background: rgba(255, 0, 0, 0.15);
+  border-color: rgba(255, 0, 0, 0.3);
+  transform: translateX(2px);
+}
+
+/* Responsividade ajustada */
+@media (max-width: 768px) {
+  .extreme-mode .points-panel {
+    padding: 0.5rem;
+  }
+
+  .extreme-mode .points-grid {
+    max-height: 160px;
+  }
+
+  .extreme-mode .points-item {
+    padding: 0.25rem 0.4rem;
+    height: 24px;
+  }
+
+  .extreme-mode .points-emoji {
+    font-size: 1rem;
+  }
+
+  .extreme-mode .points-value {
+    font-size: 0.8rem;
+  }
+
+  .extreme-mode .points-name {
+    font-size: 0.75rem;
+    max-width: 100px;
+  }
+}
+
+/* Painel de pontuação do modo extremo - Ajustes refinados */
+.extreme-mode .points-panel {
+  background: rgba(20, 0, 0, 0.95);
+  border: 1px solid #ff0000;
+  border-radius: 0.5rem;
+  padding: 0.5rem;
+  margin: 0.5rem 0;
+  box-shadow: 
+    0 0 10px rgba(255, 0, 0, 0.2),
+    inset 0 0 20px rgba(255, 0, 0, 0.1);
+}
+
+/* Cabeçalho do painel */
+.extreme-mode .points-panel-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  margin-bottom: 0.5rem;
+  background: rgba(255, 0, 0, 0.1);
+  border-radius: 0.3rem;
+  border: 1px solid rgba(255, 0, 0, 0.3);
+}
+
+.extreme-mode .points-panel-header span {
+  color: #ff3333;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.extreme-mode .points-icon {
+  color: #ff3333;
+  font-size: 1.1rem;
+}
+
+/* Grid de pontuação */
+.extreme-mode .points-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 0.25rem;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+/* Item individual de pontuação */
+.extreme-mode .points-item {
+  background: rgba(40, 0, 0, 0.6);
+  border: 1px solid rgba(255, 0, 0, 0.2);
+  border-radius: 0.3rem;
+  padding: 0.4rem 0.75rem;
+  height: 32px;
+  transition: all 0.2s ease;
+}
+
+.extreme-mode .points-content {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.extreme-mode .points-emoji {
+  font-size: 1.2rem;
+  margin-right: 0.75rem;
+  filter: drop-shadow(0 0 3px rgba(255, 0, 0, 0.3));
+  min-width: 24px;
+  text-align: center;
+}
+
+.extreme-mode .points-info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex: 1;
+}
+
+.extreme-mode .points-name {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.85);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 150px;
+  padding-right: 0.5rem;
+}
+
+.extreme-mode .points-value {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #ff3333;
+  text-shadow: 0 0 5px rgba(255, 0, 0, 0.3);
+  min-width: 40px;
+  text-align: right;
+}
+
+/* Scrollbar personalizada */
+.extreme-mode .points-grid::-webkit-scrollbar {
+  width: 4px;
+}
+
+.extreme-mode .points-grid::-webkit-scrollbar-track {
+  background: rgba(255, 0, 0, 0.1);
+  border-radius: 2px;
+}
+
+.extreme-mode .points-grid::-webkit-scrollbar-thumb {
+  background: rgba(255, 0, 0, 0.3);
+  border-radius: 2px;
+}
+
+/* Hover effects refinados */
+.extreme-mode .points-item:hover {
+  background: rgba(60, 0, 0, 0.7);
+  border-color: rgba(255, 0, 0, 0.3);
+}
+
+/* Responsividade ajustada */
+@media (max-width: 768px) {
+  .extreme-mode .points-panel {
+    padding: 0.4rem;
+  }
+
+  .extreme-mode .points-panel-header {
+    padding: 0.4rem 0.6rem;
+  }
+
+  .extreme-mode .points-item {
+    padding: 0.35rem 0.6rem;
+    height: 28px;
+  }
+
+  .extreme-mode .points-emoji {
+    font-size: 1.1rem;
+    margin-right: 0.6rem;
+  }
+
+  .extreme-mode .points-name {
+    font-size: 0.8rem;
+    max-width: 120px;
+  }
+
+  .extreme-mode .points-value {
+    font-size: 0.85rem;
+  }
+}
+
+/* Header do modo extremo */
+.extreme-mode .header-container {
+  background: linear-gradient(
+    145deg,
+    rgba(20, 0, 0, 0.95) 0%,
+    rgba(40, 0, 0, 0.98) 100%
+  );
+  border: 1px solid rgba(255, 0, 0, 0.3);
+  border-radius: 0.5rem;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  box-shadow: 
+    0 0 15px rgba(255, 0, 0, 0.2),
+    inset 0 0 20px rgba(255, 0, 0, 0.1);
+}
+
+/* Título do nível */
+.extreme-mode .header-container h1 {
+  color: #ff3333;
+  font-size: 1.1rem;
+  font-weight: 500;
+  margin: 0;
+  text-shadow: 0 0 5px rgba(255, 0, 0, 0.3);
+  padding-bottom: 0.5rem;
+}
+
+/* Badge do modo extremo */
+.extreme-mode .extreme-badge {
+  background: rgba(255, 0, 0, 0.2);
+  border: 1px solid rgba(255, 0, 0, 0.4);
+  color: #ff3333;
+  padding: 0.25rem 0.75rem;
+  border-radius: 0.3rem;
+  font-size: 0.8rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  margin: 0.5rem 0;
+  text-align: center;
+  box-shadow: 0 0 10px rgba(255, 0, 0, 0.2);
+  display: inline-block;
+}
+
+/* Descrição do nível */
+.extreme-mode .level-story {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.85rem;
+  line-height: 1.4;
+  margin: 0.75rem 0;
+  padding: 0.75rem;
+  background: rgba(255, 0, 0, 0.1);
+  border: 1px solid rgba(255, 0, 0, 0.2);
+  border-radius: 0.3rem;
+}
+
+/* Container dos botões */
+.extreme-mode .button-container {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+/* Botões */
+.extreme-mode .magic-button,
+.extreme-mode .back-button {
+  background: rgba(255, 0, 0, 0.15);
+  border: 1px solid rgba(255, 0, 0, 0.3);
+  color: #ff3333;
+  padding: 0.4rem 0.75rem;
+  border-radius: 0.3rem;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  transition: all 0.2s ease;
+  height: 32px;
+  min-width: 100px;
+  justify-content: center;
+}
+
+.extreme-mode .magic-button:hover,
+.extreme-mode .back-button:hover {
+  background: rgba(255, 0, 0, 0.25);
+  border-color: rgba(255, 0, 0, 0.4);
+  transform: translateY(-1px);
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .extreme-mode .header-container {
+    padding: 0.75rem;
+  }
+
+  .extreme-mode .header-container h1 {
+    font-size: 1rem;
+  }
+
+  .extreme-mode .extreme-badge {
+    font-size: 0.75rem;
+    padding: 0.2rem 0.6rem;
+  }
+
+  .extreme-mode .level-story {
+    font-size: 0.8rem;
+    padding: 0.6rem;
+    margin: 0.5rem 0;
+  }
+
+  .extreme-mode .magic-button,
+  .extreme-mode .back-button {
+    padding: 0.35rem 0.6rem;
+    font-size: 0.8rem;
+    height: 28px;
+    min-width: 90px;
+  }
+}
+
+/* Layout da barra lateral no modo extremo */
+.extreme-mode .info-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  height: calc(100vh - 2rem);
+  padding: 0.5rem;
+  width: 332px;
+  overflow: hidden;
+}
+
+/* Container comum para todos os painéis */
+.extreme-mode .header-container,
+.extreme-mode .points-panel,
+.extreme-mode .info-container,
+.extreme-mode .objectives,
+.extreme-mode .moves-container {
+  width: 100%;
+  margin: 0;
+  box-sizing: border-box;
+  background: rgba(20, 0, 0, 0.95);
+  border: 1px solid rgba(255, 0, 0, 0.3);
+  border-radius: 0.5rem;
+}
+
+/* Header container - altura fixa */
+.extreme-mode .header-container {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0.5rem;
+  gap: 0.35rem;
+  max-height: 22vh;
+}
+
+.extreme-mode .header-container h1 {
+  font-size: 0.9rem;
+  color: #ff3333;
+  margin: 0;
+  text-align: center;
+  width: 100%;
+}
+
+.extreme-mode .extreme-badge {
+  background: rgba(255, 0, 0, 0.15);
+  border: 1px solid rgba(255, 0, 0, 0.3);
+  color: #ff3333;
+  padding: 0.25rem 0.75rem;
+  border-radius: 0.25rem;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  width: 100%;
+  text-align: center;
+}
+
+.extreme-mode .level-story {
+  font-size: 0.8rem;
+  line-height: 1.3;
+  color: rgba(255, 255, 255, 0.8);
+  padding: 0.35rem;
+  background: rgba(255, 0, 0, 0.1);
+  border: 1px solid rgba(255, 0, 0, 0.2);
+  border-radius: 0.25rem;
+  width: 100%;
+  text-align: center;
+  margin: 0.25rem 0;
+}
+
+/* Painel de pontuação - altura fixa */
+.extreme-mode .points-panel {
+  flex: 0 0 auto;
+  padding: 0.5rem;
+  max-height: 22vh;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.extreme-mode .points-panel-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem;
+  background: rgba(255, 0, 0, 0.1);
+  border: 1px solid rgba(255, 0, 0, 0.2);
+  border-radius: 0.25rem;
+}
+
+.extreme-mode .points-grid {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding-right: 0.25rem;
+  min-height: 0;
+}
+
+/* Container de objetivos - altura flexível */
+.extreme-mode .info-container {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.5rem;
+}
+
+.extreme-mode .objectives {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding: 0.5rem;
+  min-height: 0;
+}
+
+/* Container de movimentos - altura fixa */
+.extreme-mode .moves-container {
+  flex: 0 0 auto;
+  height: 3.5rem;
+  padding: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Botões */
+.extreme-mode .button-container {
+  display: flex;
+  gap: 0.35rem;
+  width: 100%;
+}
+
+.extreme-mode .magic-button,
+.extreme-mode .back-button {
+  flex: 1;
+  height: 28px;
+  padding: 0 0.5rem;
+  background: rgba(255, 0, 0, 0.15);
+  border: 1px solid rgba(255, 0, 0, 0.3);
+  border-radius: 0.25rem;
+  color: #ff3333;
+  font-size: 0.8rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  transition: all 0.2s ease;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .extreme-mode .info-section {
+    width: 100%;
+    height: auto;
+    max-height: 40vh;
+  }
+
+  .extreme-mode .header-container {
+    max-height: none;
+    padding: 0.35rem;
+  }
+
+  .extreme-mode .points-panel {
+    max-height: none;
+    padding: 0.35rem;
+  }
+
+  .extreme-mode .info-container,
+  .extreme-mode .objectives {
+    padding: 0.35rem;
+  }
+
+  .extreme-mode .moves-container {
+    height: 3rem;
+    padding: 0.35rem;
+  }
+
+  .extreme-mode .button-container {
+    gap: 0.25rem;
+  }
+
+  .extreme-mode .magic-button,
+  .extreme-mode .back-button {
+    height: 26px;
+    font-size: 0.75rem;
+    padding: 0 0.35rem;
+  }
+}
+
+/* Container dos botões */
+.extreme-mode .button-container {
+  display: flex;
+  gap: 0.35rem;
+  width: 100%;
+  justify-content: space-between;
+}
+
+/* Estilo comum para ambos os botões */
+.extreme-mode .magic-button,
+.extreme-mode .back-button {
+  flex: 1;
+  height: 28px;
+  min-width: 0;
+  padding: 0 0.5rem;
+  background: rgba(255, 0, 0, 0.15);
+  border: 1px solid rgba(255, 0, 0, 0.3);
+  border-radius: 0.25rem;
+  color: #ff3333;
+  font-size: 0.8rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  text-align: center;
+}
+
+/* Ícones dos botões */
+.extreme-mode .magic-button span:first-child,
+.extreme-mode .back-button span:first-child {
+  font-size: 1rem;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+}
+
+/* Texto dos botões */
+.extreme-mode .magic-button span:last-child,
+.extreme-mode .back-button span:last-child {
+  line-height: 1;
+  flex: 1;
+  text-align: center;
+}
+
+/* Hover dos botões */
+.extreme-mode .magic-button:hover:not(:disabled),
+.extreme-mode .back-button:hover {
+  background: rgba(255, 0, 0, 0.25);
+  border-color: rgba(255, 0, 0, 0.4);
+  transform: translateY(-1px);
+}
+
+/* Estado desabilitado */
+.extreme-mode .magic-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: rgba(255, 0, 0, 0.1);
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .extreme-mode .button-container {
+    gap: 0.25rem;
+  }
+
+  .extreme-mode .magic-button,
+  .extreme-mode .back-button {
+    height: 26px;
+    font-size: 0.75rem;
+    padding: 0 0.35rem;
+  }
+
+  .extreme-mode .magic-button span:first-child,
+  .extreme-mode .back-button span:first-child {
+    font-size: 0.9rem;
+  }
+}
+
+/* Container dos botões */
+.extreme-mode .button-container {
+  display: flex;
+  width: 100%;
+  gap: 0.5rem;
+  padding: 0.25rem;
+  background: rgba(20, 0, 0, 0.95);
+  border: 1px solid rgba(255, 0, 0, 0.3);
+  border-radius: 0.25rem;
+  height: 40px; /* Altura fixa para o container */
+}
+
+/* Estilo comum para ambos os botões */
+.extreme-mode .magic-button,
+.extreme-mode .back-button {
+  flex: 1;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 0.75rem;
+  background: rgba(255, 0, 0, 0.15);
+  border: 1px solid rgba(255, 0, 0, 0.3);
+  border-radius: 0.25rem;
+  color: #ff3333;
+  font-size: 0.8rem;
+  transition: all 0.2s ease;
+  overflow: hidden; /* Previne que o texto saia do botão */
+  text-overflow: ellipsis; /* Adiciona ... quando o texto é muito longo */
+}
+
+/* Container do conteúdo dos botões */
+.extreme-mode .magic-button span,
+.extreme-mode .back-button span {
+  display: inline-flex;
+  align-items: center;
+}
+
+/* Ícones dos botões */
+.extreme-mode .magic-button span:first-child,
+.extreme-mode .back-button span:first-child {
+  font-size: 1rem;
+  margin-right: 0.25rem;
+  flex-shrink: 0; /* Impede que o ícone encolha */
+}
+
+/* Texto dos botões */
+.extreme-mode .magic-button span:last-child,
+.extreme-mode .back-button span:last-child {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 0.8rem;
+}
+
+/* Ajuste específico para o botão Mágica Cósmica */
+.extreme-mode .magic-button {
+  max-width: 60%; /* Limita a largura do botão maior */
+}
+
+/* Ajuste específico para o botão Voltar */
+.extreme-mode .back-button {
+  max-width: 40%; /* Limita a largura do botão menor */
+}
+
+/* Hover dos botões */
+.extreme-mode .magic-button:hover:not(:disabled),
+.extreme-mode .back-button:hover {
+  background: rgba(255, 0, 0, 0.25);
+  border-color: rgba(255, 0, 0, 0.4);
+  transform: translateY(-1px);
+}
+
+/* Estado desabilitado */
+.extreme-mode .magic-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: rgba(255, 0, 0, 0.1);
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .extreme-mode .button-container {
+    height: 36px;
+    gap: 0.35rem;
+    padding: 0.2rem;
+  }
+
+  .extreme-mode .magic-button,
+  .extreme-mode .back-button {
+    height: 28px;
+    font-size: 0.75rem;
+    padding: 0 0.5rem;
+  }
+
+  .extreme-mode .magic-button span:first-child,
+  .extreme-mode .back-button span:first-child {
+    font-size: 0.9rem;
+  }
+
+  .extreme-mode .magic-button span:last-child,
+  .extreme-mode .back-button span:last-child {
+    font-size: 0.75rem;
+  }
 }

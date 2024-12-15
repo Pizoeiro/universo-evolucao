@@ -5,7 +5,7 @@ import { motion } from 'framer-motion'
 import { db } from '../../config/firebase'
 import { getDoc, doc } from 'firebase/firestore'
 import useStore from '../../store/gameStore'
-import StarBackground from '../../components/StarBackground'
+import StarBackground from './StarBackground'
 import './Profile.css'
 
 const Profile = () => {

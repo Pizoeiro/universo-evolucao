@@ -1,75 +1,56 @@
 import { useEffect } from 'react'
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
-import useStore from './store/gameStore'
-import { auth, db } from './config/firebase'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { onAuthStateChanged } from 'firebase/auth'
+import { auth, db } from './config/firebase'
 import { doc, getDoc } from 'firebase/firestore'
+import useStore from './store/gameStore'
+import AppRoutes from './routes'
 import { User } from './types/game'
-import Login from './pages/auth/Login'
-import WorldSelect from './pages/game/WorldSelect'
-import LevelSelect from './pages/game/LevelSelect'
-import GameBoard from './pages/game/GameBoard'
-import GameLayout from './layouts/GameLayout'
-import StarBackground from './components/StarBackground'
-import Rankings from './pages/game/Rankings'
-import Profile from './pages/game/Profile'
-import MainQuest from './pages/game/MainQuest'
-import Achievements from './components/achievements/Achievements'
-import FinalChapter from './pages/game/FinalChapter'
 
 function App() {
-  const user = useStore(state => state.user)
-  const setUser = useStore(state => state.setUser)
+  const navigate = useNavigate()
+  const location = useLocation()
+  const { setUser } = useStore()
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
-      if (firebaseUser) {
-        // Buscar dados adicionais do usuário no Firestore
-        const userDoc = await getDoc(doc(db, 'players', firebaseUser.uid))
-        if (userDoc.exists()) {
-          const userData = userDoc.data() as User;
-          setUser(userData)
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        try {
+          const userDoc = await getDoc(doc(db, 'players', user.uid))
+          
+          if (userDoc.exists()) {
+            const userData = userDoc.data() as User;
+            setUser(userData)
+          } else {
+            const newUser: User = {
+              id: user.uid,
+              email: user.email || '',
+              username: user.displayName || '',
+              name: user.displayName || '',
+              createdAt: new Date().toISOString(),
+              lastLoginAt: new Date().toISOString()
+            }
+            setUser(newUser)
+          }
+          // Redireciona para a página inicial apenas se estiver na página de login
+          if (location.pathname === '/login') {
+            navigate('/')
+          }
+        } catch (error) {
+          console.error('Erro ao buscar dados do usuário:', error)
+          setUser(null)
+          navigate('/login')
         }
       } else {
         setUser(null)
+        navigate('/login')
       }
     })
 
     return () => unsubscribe()
-  }, [setUser])
+  }, [setUser, navigate, location.pathname])
 
-  return (
-    <BrowserRouter>
-      <div className="min-h-screen relative">
-        <StarBackground />
-        <div className="relative z-10 min-h-screen bg-transparent">
-          <Routes>
-            {!user ? (
-              <>
-                <Route path="/login" element={<Login />} />
-                <Route path="*" element={<Navigate to="/login" replace />} />
-              </>
-            ) : (
-              <>
-                <Route element={<GameLayout />}>
-                  <Route path="/worlds" element={<WorldSelect />} />
-                  <Route path="/levels/:worldId" element={<LevelSelect />} />
-                  <Route path="/game/:worldId/:levelId" element={<GameBoard />} />
-                  <Route path="/rankings" element={<Rankings />} />
-                  <Route path="/game/profile" element={<Profile />} />
-                  <Route path="/main-quest/:worldId/:levelId" element={<MainQuest />} />
-                  <Route path="/main-quest/:worldId/final" element={<FinalChapter />} />
-                  <Route path="/achievements" element={<Achievements />} />
-                  <Route path="/" element={<Navigate to="/worlds" replace />} />
-                  <Route path="*" element={<Navigate to="/worlds" replace />} />
-                </Route>
-              </>
-            )}
-          </Routes>
-        </div>
-      </div>
-    </BrowserRouter>
-  )
+  return <AppRoutes />
 }
 
 export default App

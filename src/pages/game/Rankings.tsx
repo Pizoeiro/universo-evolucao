@@ -4,8 +4,8 @@ import { FaTrophy, FaMedal, FaStar, FaChevronDown } from 'react-icons/fa'
 import { motion } from 'framer-motion'
 import useStore from '../../store/gameStore'
 import { gameService } from '../../config/firebase'
-import { worldLevels } from '../../config/levels'
-import StarBackground from '../../components/StarBackground'
+import { worldLevels } from '../../data/levels'
+import StarBackground from './StarBackground'
 import './Rankings.css'
 
 export default function Rankings() {

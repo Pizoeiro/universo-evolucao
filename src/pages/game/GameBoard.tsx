@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import useStore from '../../store/gameStore';
-import { worldLevels } from '../../config/levels/index';
+import { worldLevels } from '../../data/levels/index';
 import { useAchievements } from '../../hooks/useAchievements';
 import './GameBoard.css';
 import { gameService } from '../../config/firebase';
@@ -17,7 +17,7 @@ const COSMIC_MAGIC_PERCENTAGE = 0.5;
 
 // Emojis base para cada mundo
 const worldEmojis = {
-  1: ['⚛️', '⚡', '✨', '💥', '🌠', '🌌'],
+  1: ['⚛️', '⚡', '✨', '💥', '🌠', '🌌', '🌟', '💫', '🌊', '🌑', '🕳️'],
   2: ['💫', '🌑', '🌍', '☀️', '🌌', '🪐'],
   3: ['⚗️', '🧬', '🧪', '🫧', '🦠', '🔬'],
   4: ['🔗', '🧬', '🧴', '🏭', '♻️', '🧪'],
@@ -57,6 +57,8 @@ interface Objective {
   star: number;
   isActive: boolean;
   isCompleted: boolean;
+  points?: number;
+  currentPoints?: number;
 }
 
 interface Match {
@@ -89,16 +91,27 @@ const GameBoard = () => {
     const [selectedTile, setSelectedTile] = useState<Position | null>(null);
     const [isProcessing, setIsProcessing] = useState<boolean>(false);
     const [isSoundEnabled, setIsSoundEnabled] = useState(true);
+    const [isExtreme, setIsExtreme] = useState(false);
   
     // Adicionar um ref para controlar o estado de animação
     const gridRef = useRef(grid);
   
     // Obter dados do nível atual
-    const currentWorld = worldId ? worldLevels[Number(worldId) || 1] : null;
-    const currentLevel = currentWorld?.levels.find((l) => l.id === Number(levelId)) || null;
+    const currentWorld = worldId ? worldLevels[worldId] : null;
   
-    // Tamanho do grid dinâmico com base na configuração do mundo
-    const GRID_SIZE = currentWorld?.gridSize || 8;
+    // Se for extremo, buscar o mundo correto
+    const extremeWorld = worldId?.includes('extreme') && worldId ? worldLevels[worldId] : null;
+    const effectiveWorld = extremeWorld || currentWorld;
+
+    // Atualizar o estado isExtreme quando o worldId mudar
+    useEffect(() => {
+      setIsExtreme(worldId?.includes('extreme') || false);
+    }, [worldId]);
+
+    const currentLevel = effectiveWorld?.levels.find((l) => l.id === Number(levelId)) || null;
+  
+    // Tamanho do grid dinâmico com base na configuração do nível
+    const GRID_SIZE = currentLevel?.gridSize || effectiveWorld?.gridSize || 8;
   
     // Directions for tile movement
     const directions = [
@@ -116,6 +129,7 @@ const GameBoard = () => {
       return;
     }
     
+    // Verificar se é um nível extremo
     if (!initialized && user) {
       // Verificar progresso existente
       const currentProgress = user.levelProgress?.find(
@@ -208,7 +222,9 @@ const GameBoard = () => {
           currentMatches: 0,
           star: currentStar,
           isActive: true,
-          isCompleted: false
+          isCompleted: false,
+          points: isExtreme ? starObjectiveConfig.points : undefined,
+          currentPoints: isExtreme ? 0 : undefined
         }];
         
         console.log('Objetivos inicializados:', newObjectives);
@@ -218,7 +234,7 @@ const GameBoard = () => {
         return objectiveEmojis;
       };
   
-  // Função para obter todos os objetivos do nível
+  // Atualizar a função getAllLevelObjectives para incluir os pontos
   const getAllLevelObjectives = (): Objective[] => {
     if (!currentLevel) return [];
     
@@ -239,7 +255,10 @@ const GameBoard = () => {
           isActive: i + 1 === currentStar,
           isCompleted: user?.levelProgress?.find(
             (p) => p.worldId === worldId && p.levelId === Number(levelId)
-          )?.objectives?.[starLevel] || false
+          )?.objectives?.[starLevel] || false,
+          // Adicionar pontos se estiver no modo extremo
+          points: isExtreme ? config.points : undefined,
+          currentPoints: isExtreme ? (objectives[0]?.currentPoints || 0) : undefined
         });
       }
     }
@@ -263,11 +282,15 @@ const GameBoard = () => {
       avoidEmojis: string[] = []
     ): string => {
       const useObjectiveEmoji = Math.random() < 0.3;
-      const useSpecialEmoji = Math.random() < SPECIAL_EMOJI_CHANCE; // 10% chance of special emoji
+      const useSpecialEmoji = Math.random() < SPECIAL_EMOJI_CHANCE;
 
+      // Obter todos os emojis disponíveis para o mundo extremo
       let availableEmojis = useObjectiveEmoji
           ? currentObjectiveEmojis
-          : getWorldEmojis(Number(worldId) || 1);
+          : (isExtreme && currentWorld?.combinations 
+             ? currentWorld.combinations.map(c => c.emoji) 
+             : getWorldEmojis(Number(worldId) || 1));
+
       availableEmojis = availableEmojis.filter((emoji) => !avoidEmojis.includes(emoji));
   
       // If special emoji is selected, return it
@@ -318,7 +341,7 @@ const GameBoard = () => {
       
       return availableEmojis[Math.floor(Math.random() * availableEmojis.length)];
     },
-    [GRID_SIZE, worldId, currentWorld]
+    [GRID_SIZE, worldId, currentWorld, isExtreme]
   );
 
   // 2. Depois, declarar ensureMinimumObjectiveEmojis
@@ -662,33 +685,79 @@ const GameBoard = () => {
                 .filter(([emoji]) => objective.emojis.includes(emoji))
                 .reduce((sum, [, count]) => sum + count, 0);
             
+            // Calcular pontos se estiver no modo extremo
+            let newPoints = objective.currentPoints || 0;
+            if (isExtreme && currentWorld) {
+              matches.forEach(match => {
+                const emoji = currentGrid[match.positions[0].row][match.positions[0].col].emoji;
+                const combination = currentWorld.combinations.find(c => c.emoji === emoji);
+                if (combination) {
+                  // Cada posição do match adiciona os pontos base do emoji
+                  match.positions.forEach(position => {
+                    const matchPoints = combination.points;
+                    console.log(`Match ${isUserMatch ? 'do usuário' : 'em cascata'} - Emoji ${emoji} (${combination.name}):`, {
+                      pontos: matchPoints,
+                      posição: `[${position.row},${position.col}]`
+                    });
+                    newPoints += matchPoints;
+                  });
+                }
+              });
+            }
+            
+            console.log('Total de pontos após matches:', {
+              pontosAnteriores: objective.currentPoints || 0,
+              novoPontos: newPoints,
+              diferença: newPoints - (objective.currentPoints || 0),
+              tipoMatch: isUserMatch ? 'usuário' : 'cascata'
+            });
+            
             return {
                 ...objective,
-                currentMatches: objective.currentMatches + matchCount
+                currentMatches: objective.currentMatches + matchCount,
+                currentPoints: newPoints
             };
             });
     
-            if (currentLevel) {
-            const currentStarLevel: StarLevel = (['one', 'two', 'three'][currentStar - 1]) as StarLevel;
-            const starObjectiveConfig = currentLevel?.starObjectives?.[currentStarLevel];
-            
-            if (starObjectiveConfig) {
+            setObjectives(updatedObjectives);
+
+            // Verificar condições de objetivo apenas após matches do usuário
+            if (isUserMatch && currentLevel) {
+              const currentStarLevel: StarLevel = (['one', 'two', 'three'][currentStar - 1]) as StarLevel;
+              const starObjectiveConfig = currentLevel.starObjectives[currentStarLevel];
+              
+              if (starObjectiveConfig) {
                 const objective = updatedObjectives[0];
-                const objectiveComplete = objective.currentMatches >= starObjectiveConfig.requiredMatches;
-            
-                setObjectives(updatedObjectives);
-            
+                const matchesComplete = objective.currentMatches >= starObjectiveConfig.requiredMatches;
+                const pointsComplete = isExtreme 
+                  ? objective.currentPoints >= (starObjectiveConfig.points || 0)
+                  : true;
+                
+                const objectiveComplete = matchesComplete && pointsComplete;
+
                 if (objectiveComplete && movesLeft > 0) {
-                    Promise.resolve().then(() => {
-                        handleStarComplete();
-                    });
+                  console.log('Objetivo completado:', {
+                    matches: `${objective.currentMatches}/${starObjectiveConfig.requiredMatches}`,
+                    pontos: isExtreme ? `${objective.currentPoints}/${starObjectiveConfig.points}` : 'N/A',
+                    movesRestantes: movesLeft
+                  });
+                  
+                  Promise.resolve().then(() => {
+                    handleStarComplete();
+                  });
                 } else if (movesLeft === 0) {
-                    Promise.resolve().then(() => {
-                        handleGameOver(false);
-                    });
+                  console.log('Game Over - Objetivo incompleto:', {
+                    matches: `${objective.currentMatches}/${starObjectiveConfig.requiredMatches}`,
+                    pontos: isExtreme ? `${objective.currentPoints}/${starObjectiveConfig.points}` : 'N/A',
+                    completo: objectiveComplete
+                  });
+                  
+                  Promise.resolve().then(() => {
+                    handleGameOver(false);
+                  });
                 }
+              }
             }
-        }
       }
       
       // 4. Processar a queda
@@ -915,7 +984,9 @@ const GameBoard = () => {
             currentMatches: 0,
             star: nextStar,
             isActive: true,
-            isCompleted: false
+            isCompleted: false,
+            currentPoints: 0, // Inicializar pontos atuais
+            points: nextObjectives.points // Adicionar pontos objetivo
         }];
         
         setObjectives(newObjectives);
@@ -931,33 +1002,54 @@ const GameBoard = () => {
         setShowResults(true);
         
         if (allObjectivesMet && user && worldId && levelId) {
-            const finalStars = currentStar;
-            setStars(finalStars);
+            const currentStarLevel: StarLevel = (['one', 'two', 'three'][currentStar - 1]) as StarLevel;
+            const starObjectiveConfig = currentLevel?.starObjectives[currentStarLevel];
             
-            try {
-                await gameService.updateUserProgress(
-                user.id,
-                worldId.toString(),
-                Number(levelId),
-                finalStars,
-                true,
-                'three'
-            );
-            
-                // Buscar dados atualizados do usuário
-                const updatedUserData = await gameService.getCurrentUserData(user.id);
-                if (updatedUserData) {
+            if (starObjectiveConfig && objectives[0]) {
+              const matchesComplete = objectives[0].currentMatches >= starObjectiveConfig.requiredMatches;
+              const pointsComplete = isExtreme 
+                ? (objectives[0].currentPoints || 0) >= (starObjectiveConfig.points || 0)
+                : true;
+              
+              // Só considera completo se ambas as condições forem atendidas no modo extremo
+              const isComplete = isExtreme ? (matchesComplete && pointsComplete) : matchesComplete;
+
+              if (isComplete) {
+                const finalStars = currentStar;
+                setStars(finalStars);
+                
+                try {
+                  await gameService.updateUserProgress(
+                    user.id,
+                    worldId.toString(),
+                    Number(levelId),
+                    finalStars,
+                    true,
+                    currentStarLevel
+                  );
+                  
+                  // Atualizar dados do usuário
+                  const updatedUserData = await gameService.getCurrentUserData(user.id);
+                  if (updatedUserData) {
                     const gameUser: GameUser = {
-                    ...updatedUserData,
-                    createdAt: new Date(),
-                    lastLoginAt: new Date()
+                      ...updatedUserData,
+                      createdAt: new Date(),
+                      lastLoginAt: new Date()
                     };
                     useStore.getState().setUser(gameUser);
+                  }
+                } catch (error) {
+                  console.error('Erro ao atualizar progresso:', error);
                 }
-            } catch (error) {
-                console.error('Erro ao atualizar progresso:', error);
+              }
             }
         }
+    };
+    
+    const handleBack = () => {
+      // Se for um nível extremo, extrair o ID do mundo base
+      const baseWorldId = worldId?.replace('-extreme', '');
+      navigate(`/levels/${baseWorldId}`);
     };
     
     const handleRestart = () => {
@@ -971,14 +1063,12 @@ const GameBoard = () => {
         setMovesLeft(0);
         setInitialized(false);
         
+        // Extrair o ID do mundo base (remover -extreme se existir)
+        const baseWorldId = worldId?.replace('-extreme', '');
+        
         // Navegar de volta para a tela de seleção de níveis
-        navigate(`/levels/${worldId}`);
+        navigate(`/levels/${baseWorldId}`);
     };
-    
-    const handleBack = () => {
-        navigate(`/levels/${worldId}`);
-    };
-    
     
     // Função para aplicar a Mágica Cósmica
     const aplicarMagicaCosmica = () => {
@@ -1072,6 +1162,7 @@ const GameBoard = () => {
         tile.isMatched && 'match',
         isPossibleMatch && 'possible-match',
         tile.isNew && 'new',
+        isSpecial && 'special-emoji',
         ].filter(Boolean).join(' ');
     
         return (
@@ -1123,27 +1214,56 @@ const GameBoard = () => {
     
     return (
         <div className="game-board">
-            <div className="game-container">
+            <div 
+              className={`game-container ${isExtreme ? 'extreme-mode' : ''}`}
+              data-extreme={isExtreme}
+            >
             <div className="info-section">
                 <div className="header-container">
-                <h1>{currentLevel?.name}</h1>
-                <p className="level-story">{currentLevel?.story}</p>
-                <div className="button-container">
-                    {magicaCosmicaLeft > 0 && (
-                    <button
-                        className="magic-button"
-                        onClick={aplicarMagicaCosmica}
-                        disabled={isAnimating}
-                    >
-                        ✨ Mágica Cósmica {magicaCosmicaLeft} ✨
-                    </button>
-                    )}
-                    <button className="back-button" onClick={handleBack}>
-                    ↩ Voltar
-                    </button>
+                    <h1>{currentLevel?.name}</h1>
+                    <div className="extreme-badge">MODO EXTREMO</div>
+                    <p className="level-story">{currentLevel?.story}</p>
+                    <div className="button-container">
+                        {magicaCosmicaLeft > 0 && (
+                            <button
+                                className="magic-button"
+                                onClick={aplicarMagicaCosmica}
+                                disabled={isAnimating}
+                            >
+                                <span>✨</span>
+                                <span>Mágica Cósmica ({magicaCosmicaLeft})</span>
+                            </button>
+                        )}
+                        <button className="back-button" onClick={handleBack}>
+                            <span>↩</span>
+                            <span>Voltar</span>
+                        </button>
+                    </div>
                 </div>
-                </div>
-    
+
+                {/* Adicionar o painel de pontos para modo extremo */}
+                {isExtreme && currentWorld && (
+                    <div className="points-panel">
+                        <div className="points-panel-header">
+                            <span className="points-icon">💯</span>
+                            <span>Pontuação dos Elementos</span>
+                        </div>
+                        <div className="points-grid">
+                            {currentWorld.combinations.map((combo, index) => (
+                                <div key={index} className="points-item">
+                                    <div className="points-content">
+                                        <span className="points-emoji">{combo.emoji}</span>
+                                        <div className="points-info">
+                                            <span className="points-name">{combo.name}</span>
+                                            <span className="points-value">{combo.points}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                )}
+
                 <div className="info-container">
                 <div className="objectives">
                     {getAllLevelObjectives().map((objective, index) => (
@@ -1161,8 +1281,20 @@ const GameBoard = () => {
                             ))}
                         </div>
                         <div className="objective-progress">
-                            {objective.isActive ? `${objectives[0]?.currentMatches || 0} / ${objective.requiredMatches}` : 
-                            objective.isCompleted ? '✓ Completo' : 'Bloqueado'}
+                            {objective.isActive ? (
+                              <div className="progress-container">
+                                <div className="matches-progress">
+                                  {objectives[0]?.currentMatches || 0} / {objective.requiredMatches}
+                                </div>
+                                {isExtreme && objective.points && (
+                                  <div className={`objective-points ${
+                                    (objectives[0]?.currentPoints || 0) >= objective.points ? 'achieved' : ''
+                                  }`}>
+                                    {objectives[0]?.currentPoints?.toLocaleString() || 0} / {objective.points?.toLocaleString()} pts
+                                  </div>
+                                )}
+                              </div>
+                            ) : objective.isCompleted ? '✓ Completo' : 'Bloqueado'}
                         </div>
                         </div>
                         <div className="objective-description">
@@ -1184,8 +1316,14 @@ const GameBoard = () => {
                 </div>
             </div>
     
-            <div className="grid-container">
-                <div className="grid" data-size={GRID_SIZE}>
+            <div 
+              className="grid-container" 
+              data-extreme={isExtreme}
+            >
+                <div 
+                  className="grid"
+                  data-size={GRID_SIZE}
+                >
                 {grid.map((row, i) => (
                     <div key={i} className="row">
                     {row.map((tile, j) => (

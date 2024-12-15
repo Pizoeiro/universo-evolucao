@@ -1,0 +1,434 @@
+:root {
+  --color-primary: #00ffff;
+  --color-secondary: #88ccff;
+  --color-accent: #ffd700;
+  --color-terminal: #00ff00;
+  --color-background: rgba(13, 17, 23, 0.2);
+  --glow-primary: rgba(0, 255, 255, 0.2);
+  --font-heading: 'Orbitron', sans-serif;
+  --font-body: 'Quicksand', sans-serif;
+  --hologram-glow: 0 0 20px rgba(0, 255, 255, 0.3);
+  --hologram-border: 1px solid rgba(0, 255, 255, 0.3);
+  --glitch-color-1: rgba(0, 255, 255, 0.5);
+  --glitch-color-2: rgba(255, 0, 255, 0.5);
+  --opacity-general: 1;
+  --hologram-opacity: 1;
+  --glow-intensity: 1;
+  --animation-speed: 1;
+}
+
+.universo-container {
+  position: relative;
+  min-height: 100vh;
+  width: 100%;
+  overflow: hidden;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: radial-gradient(circle at center, 
+    rgba(13, 25, 48, 0.8) 0%,
+    rgba(13, 17, 23, 0.9) 100%
+  );
+  gap: 1.5rem;
+}
+
+.cockpit-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    linear-gradient(45deg, rgba(0, 255, 255, 0.1) 0%, transparent 20%),
+    radial-gradient(circle at center, transparent 50%, rgba(0, 0, 0, 0.5) 100%);
+  pointer-events: none;
+}
+
+.holographic-display {
+  width: 90%;
+  max-width: 1400px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+  transform-style: preserve-3d;
+  perspective: 1000px;
+}
+
+.terminal-container {
+  background: rgba(13, 17, 23, 0.9);
+  border: 1px solid var(--color-primary);
+  border-radius: 10px;
+  height: 200px;
+  overflow: hidden;
+}
+
+.terminal-container .xterm {
+  height: 100%;
+}
+
+.terminal {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  padding: 0.5rem;
+}
+
+/* Estilização do terminal xterm */
+.xterm {
+  padding: 0.5rem;
+  height: 100%;
+}
+
+.xterm-viewport {
+  background-color: transparent !important;
+}
+
+.xterm-screen {
+  background-color: transparent !important;
+}
+
+/* Remove a barra de rolagem vertical do terminal */
+.terminal-container .xterm-viewport {
+  overflow-y: hidden !important;
+}
+
+.status-panel {
+  background: rgba(13, 17, 23, 0.8);
+  border: 1px solid var(--color-primary);
+  border-radius: 10px;
+  padding: 1rem;
+  transform: rotateX(-5deg) rotateY(5deg);
+  animation: float 6s ease-in-out infinite reverse;
+  max-height: 280px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-primary) transparent;
+  scroll-behavior: smooth;
+}
+
+.status-header {
+  font-family: var(--font-heading);
+  color: var(--color-primary);
+  font-size: 1.1rem;
+  margin-bottom: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid rgba(0, 255, 255, 0.2);
+}
+
+.status-item {
+  margin-bottom: 0.75rem;
+  padding: 0.75rem;
+  background: rgba(13, 17, 23, 0.6);
+  border-radius: 8px;
+  border: 1px solid rgba(0, 255, 255, 0.1);
+  transition: all 0.3s ease;
+}
+
+.status-item:hover {
+  border-color: rgba(0, 255, 255, 0.3);
+  box-shadow: 0 0 15px rgba(0, 255, 255, 0.1);
+}
+
+.status-item-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.4rem;
+}
+
+.status-icon {
+  color: var(--color-primary);
+  font-size: 1rem;
+  opacity: var(--opacity-general);
+}
+
+.status-actions {
+  display: flex;
+  gap: 0.4rem;
+  margin-top: 0.4rem;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: all 0.3s ease;
+}
+
+.status-item:hover .status-actions {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.status-action-button {
+  background: rgba(0, 255, 255, 0.1);
+  border: 1px solid rgba(0, 255, 255, 0.2);
+  border-radius: 4px;
+  padding: 0.25rem 0.6rem;
+  color: var(--color-primary);
+  font-family: var(--font-heading);
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.status-action-button:hover {
+  background: rgba(0, 255, 255, 0.2);
+  border-color: rgba(0, 255, 255, 0.4);
+  box-shadow: 0 0 10px rgba(0, 255, 255, 0.2);
+}
+
+.status-label {
+  color: var(--color-secondary);
+  font-size: 0.85rem;
+  margin-bottom: 0.4rem;
+}
+
+.status-value {
+  color: var(--color-primary);
+  font-family: var(--font-heading);
+  font-size: 1rem;
+}
+
+.status-bar {
+  height: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.status-bar-fill {
+  height: 100%;
+  background: var(--color-primary);
+  box-shadow: 0 0 10px var(--color-primary);
+}
+
+.command-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+  width: 90%;
+  max-width: 1400px;
+  margin: 0 auto;
+  transform-style: preserve-3d;
+  perspective: 1000px;
+}
+
+.command-card {
+  background: rgba(13, 17, 23, 0.8);
+  border: 1px solid var(--color-primary);
+  border-radius: 10px;
+  padding: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  backdrop-filter: blur(10px);
+  transform: translateZ(0);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  opacity: var(--opacity-general);
+}
+
+.command-icon {
+  font-size: 2rem;
+  color: var(--color-primary);
+  filter: drop-shadow(0 0 calc(10px * var(--glow-intensity)) var(--color-primary));
+  position: relative;
+  z-index: 2;
+  animation: iconPulse 4s ease-in-out infinite;
+}
+
+.command-content {
+  flex: 1;
+}
+
+.command-title {
+  font-family: var(--font-heading);
+  font-size: 1.3rem;
+  color: var(--color-primary);
+  margin-bottom: 0.5rem;
+  position: relative;
+  animation: glitch 5s infinite;
+}
+
+.command-description {
+  font-family: var(--font-body);
+  color: var(--color-secondary);
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+.command-status-indicator {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  box-shadow: 0 0 10px var(--color-primary);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.5);
+    opacity: 0.5;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Responsividade */
+@media (max-width: 1024px) {
+  .holographic-display {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .universo-container {
+    padding: 1rem;
+  }
+  
+  .command-grid {
+    grid-template-columns: 1fr;
+  }
+} 
+
+/* Novas animações */
+@keyframes float {
+  0%, 100% { transform: translateY(0) rotateX(10deg); }
+  50% { transform: translateY(-10px) rotateX(10deg); }
+}
+
+@keyframes glitch {
+  0%, 90%, 100% { 
+    text-shadow: 0 0 10px var(--color-primary);
+    transform: none;
+  }
+  91% { 
+    text-shadow: -2px 0 var(--glitch-color-1), 2px 0 var(--glitch-color-2);
+    transform: skew(2deg);
+  }
+  92% { 
+    text-shadow: 2px 0 var(--glitch-color-1), -2px 0 var(--glitch-color-2);
+    transform: skew(-2deg);
+  }
+  93% { 
+    text-shadow: -2px 0 var(--glitch-color-2), 2px 0 var(--glitch-color-1);
+    transform: skew(2deg);
+  }
+}
+
+@keyframes iconPulse {
+  0%, 100% { 
+    transform: scale(1);
+    filter: drop-shadow(0 0 10px var(--color-primary));
+  }
+  50% { 
+    transform: scale(1.1);
+    filter: drop-shadow(0 0 20px var(--color-primary));
+  }
+}
+
+/* Linhas de conexão */
+.connection-lines {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+  opacity: 0.5;
+}
+
+.connection-line {
+  position: absolute;
+  background: linear-gradient(90deg, 
+    transparent,
+    var(--color-primary),
+    transparent
+  );
+  height: 2px;
+  width: 100%;
+  transform-origin: left;
+  opacity: calc(var(--hologram-opacity) * 0.3);
+}
+
+/* Adicione novos estilos para os nós da rede neural */
+.neural-node {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: var(--color-primary);
+  border-radius: 50%;
+  box-shadow: 0 0 10px var(--color-primary);
+  opacity: calc(var(--hologram-opacity) * 0.5);
+}
+
+@keyframes nodeFloat {
+  0%, 100% { transform: translate(0, 0); }
+  25% { transform: translate(10px, 10px); }
+  50% { transform: translate(0, 20px); }
+  75% { transform: translate(-10px, 10px); }
+}
+
+@keyframes lineFlow {
+  0% { 
+    transform: scaleX(0);
+    opacity: 0;
+  }
+  50% { 
+    transform: scaleX(1);
+    opacity: 0.5;
+  }
+  100% { 
+    transform: scaleX(0);
+    opacity: 0;
+  }
+}
+
+/* Responsividade ajustada */
+@media (max-width: 1200px) {
+  .command-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .command-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .holographic-display {
+    grid-template-columns: 1fr;
+  }
+} 
+
+/* Ajuste as animações com base na velocidade */
+.neural-node, .connection-line {
+  animation-duration: calc(3s / var(--animation-speed));
+}
+
+/* Estilize a scrollbar do status-panel */
+.status-panel::-webkit-scrollbar {
+  width: 4px;
+}
+
+.status-panel::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.status-panel::-webkit-scrollbar-thumb {
+  background-color: var(--color-primary);
+  border-radius: 2px;
+}

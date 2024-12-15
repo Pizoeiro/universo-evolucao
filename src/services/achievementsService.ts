@@ -1,7 +1,7 @@
 import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
 import { db } from '../config/firebase';
 import { Achievement, UserProgress } from '../types/achievements';
-import { achievements } from '../config/achievements/achievements';
+import { achievements } from '../data/achievements/achievements';
 
 export const achievementsService = {
   async getUserProgress(userId: string): Promise<UserProgress | null> {

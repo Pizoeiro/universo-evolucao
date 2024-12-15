@@ -1,11 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { world1MainQuest, MainQuestContent, Dialog } from '../../config/levels/world1/World1MainQuest';
-import { world2MainQuest } from '../../config/levels/world2/World2MainQuest';
+import { world1MainQuest, MainQuestContent, Dialog } from '../../data/levels/world1/World1MainQuest';
+import { world2MainQuest } from '../../data/levels/world2/World2MainQuest';
 import { useAchievements } from '../../hooks/useAchievements';
 import { FaArrowRight, FaStar, FaBook } from 'react-icons/fa';
-import StarBackground from '../../components/StarBackground';
 
 import './MainQuest.css';
 
@@ -61,6 +60,7 @@ const MainQuest = () => {
   const [mainQuestContent, setMainQuestContent] = useState<MainQuestContent | null>(null);
   const { updateProgress } = useAchievements();
   const [direction, setDirection] = useState(0);
+  const [currentWorld, setCurrentWorld] = useState('');
 
   useEffect(() => {
     if (worldId && levelId) {
@@ -71,6 +71,7 @@ const MainQuest = () => {
         content = world2MainQuest.find((content) => content.levelId === Number(levelId));
       }
       setMainQuestContent(content || null);
+      setCurrentWorld(worldId);
     }
   }, [worldId, levelId]);
 
@@ -203,17 +204,10 @@ const MainQuest = () => {
           </motion.div>
           <motion.div 
             className="dialog-text"
-            initial={{ opacity: 0, y: 10 }}
+            initial={{ opacity: 0 }}
             animate={{ 
               opacity: 1,
-              y: 0,
-              transition: { 
-                type: "spring",
-                stiffness: 150,
-                damping: 15,
-                delay: 0.1,
-                duration: 0.2
-              }
+              transition: { duration: 0.3, delay: 0.1 }
             }}
           >
             {text}
@@ -268,8 +262,8 @@ const MainQuest = () => {
   }
 
   return (
-    <div className="main-quest-container">
-      <StarBackground />
+    <div className={`main-quest-container mundo-${currentWorld}`}>
+      <div className={`world-background mundo-${currentWorld}`}></div>
       <motion.div 
         className="main-quest-content"
         initial={{ opacity: 0, scale: 0.95 }}
@@ -335,34 +329,6 @@ const MainQuest = () => {
             >
               {mainQuestContent && currentDialogIndex < mainQuestContent.dialogs.length && 
                 renderDialog(mainQuestContent.dialogs[currentDialogIndex])}
-              
-              <motion.div 
-                className="navigation-hints"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.5 }}
-              >
-                {currentDialogIndex > 0 && (
-                  <motion.div 
-                    className="nav-hint left"
-                    whileHover={{ x: -5 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={handlePrevDialog}
-                  >
-                    <FaArrowRight style={{ transform: 'rotate(180deg)' }} />
-                  </motion.div>
-                )}
-                {currentDialogIndex < mainQuestContent.dialogs.length - 1 && (
-                  <motion.div 
-                    className="nav-hint right"
-                    whileHover={{ x: 5 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={handleNextDialog}
-                  >
-                    <FaArrowRight />
-                  </motion.div>
-                )}
-              </motion.div>
             </motion.div>
           </AnimatePresence>
         </div>

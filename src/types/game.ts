@@ -15,6 +15,11 @@ export interface User {
       three?: boolean;
     };
   }[];
+  spaceShooterProgress?: {
+    levelId: number;
+    completed: boolean;
+    highScore: number;
+  }[];
   createdAt: Date;
   lastLoginAt: Date;
   totalStars?: number;
