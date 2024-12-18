@@ -1,12 +1,14 @@
 import { World } from './types'
+import { fragmentosMundo2 } from '../FragmentosConhecimento/mundo2'
 
 export const world2: World = {
   name: 'A Era das Partículas e da Radiação',
   description: 'Mergulhe em um universo denso e quente, repleto de partículas subatômicas e radiação intensa. Acompanhe a formação das primeiras partículas, núcleos atômicos e o equilíbrio delicado entre matéria, antimatéria e energia.',
   icon: '🔆',
   gridSize: 7,
-  specialEmoji: '🌟', // Special emoji for world 2
-  explosionRadius: 2, // Explosion affects 2 grid cells around the special emoji
+  specialEmoji: '🌟',
+  explosionRadius: 2,
+  combinations: [],
   levels: [
     {
       id: 1,
@@ -38,14 +40,7 @@ export const world2: World = {
           maxMoves: 10
         }
       },
-      combinations: [
-        {
-          emoji: '🧪',
-          name: 'Partícula Fundamental',
-          points: 0,
-          description: 'O estado primordial de quarks e gluons'
-        }
-      ]
+      fragmentoConhecimento: fragmentosMundo2[0]
     },
     {
       id: 2,
@@ -77,14 +72,7 @@ export const world2: World = {
           maxMoves: 10
         }
       },
-      combinations: [
-        {
-          emoji: '⚛️',
-          name: 'Núcleo Inicial',
-          points: 0,
-          description: 'Os primeiros prótons e nêutrons, base da matéria comum'
-        }
-      ]
+      fragmentoConhecimento: fragmentosMundo2[1]
     },
     {
       id: 3,
@@ -116,14 +104,7 @@ export const world2: World = {
           maxMoves: 10
         }
       },
-      combinations: [
-        {
-          emoji: '⚗️',
-          name: 'Núcleo Leve',
-          points: 0,
-          description: 'A base química inicial do universo: H, He e Li'
-        }
-      ]
+      fragmentoConhecimento: fragmentosMundo2[2]
     },
     {
       id: 4,
@@ -155,14 +136,7 @@ export const world2: World = {
           maxMoves: 10
         }
       },
-      combinations: [
-        {
-          emoji: '⚖️',
-          name: 'Balança Cósmica',
-          points: 0,
-          description: 'O delicado equilíbrio entre matéria e antimatéria'
-        }
-      ]
+      fragmentoConhecimento: fragmentosMundo2[3]
     },
     {
       id: 5,
@@ -194,14 +168,7 @@ export const world2: World = {
           maxMoves: 10
         }
       },
-      combinations: [
-        {
-          emoji: '❄️',
-          name: 'Frio Cósmico',
-          points: 0,
-          description: 'A diminuição da temperatura que possibilita novas estruturas'
-        }
-      ]
+      fragmentoConhecimento: fragmentosMundo2[4]
     },
     {
       id: 6,
@@ -233,14 +200,7 @@ export const world2: World = {
           maxMoves: 10
         }
       },
-      combinations: [
-        {
-          emoji: '🔆',
-          name: 'Raio Primordial',
-          points: 0,
-          description: 'A radiação dominante no jovem universo'
-        }
-      ]
+      fragmentoConhecimento: fragmentosMundo2[5]
     },
     {
       id: 7,
@@ -272,14 +232,7 @@ export const world2: World = {
           maxMoves: 10
         }
       },
-      combinations: [
-        {
-          emoji: '💡',
-          name: 'Fóton Cativo',
-          points: 0,
-          description: 'Luz presa em um universo opaco'
-        }
-      ]
+      fragmentoConhecimento: fragmentosMundo2[6]
     },
     {
       id: 8,
@@ -311,14 +264,7 @@ export const world2: World = {
           maxMoves: 10
         }
       },
-      combinations: [
-        {
-          emoji: '🌑',
-          name: 'Sombra Cósmica',
-          points: 0,
-          description: 'A matéria invisível que molda o universo'
-        }
-      ]
+      fragmentoConhecimento: fragmentosMundo2[7]
     },
     {
       id: 9,
@@ -350,14 +296,7 @@ export const world2: World = {
           maxMoves: 10
         }
       },
-      combinations: [
-        {
-          emoji: '🥣',
-          name: 'Mistura Particulada',
-          points: 0,
-          description: 'O caldo de partículas antes dos átomos'
-        }
-      ]
+      fragmentoConhecimento: fragmentosMundo2[8]
     },
     {
       id: 10,
@@ -389,14 +328,7 @@ export const world2: World = {
           maxMoves: 10
         }
       },
-      combinations: [
-        {
-          emoji: '🤝',
-          name: 'Força Primordial',
-          points: 0,
-          description: 'As interações fraca e forte moldando a matéria'
-        }
-      ]
+      fragmentoConhecimento: fragmentosMundo2[9]
     },
     {
       id: 11,
@@ -428,14 +360,7 @@ export const world2: World = {
           maxMoves: 10
         }
       },
-      combinations: [
-        {
-          emoji: '🌌',
-          name: 'Semente Gravitacional',
-          points: 0,
-          description: 'Gravidade guiando a formação das futuras estruturas'
-        }
-      ]
+      fragmentoConhecimento: fragmentosMundo2[10]
     },
     {
       id: 12,
@@ -467,14 +392,7 @@ export const world2: World = {
           maxMoves: 10
         }
       },
-      combinations: [
-        {
-          emoji: '🪨',
-          name: 'Densidade Cósmica',
-          points: 0,
-          description: 'A massa e energia que definem o destino do universo'
-        }
-      ]
+      fragmentoConhecimento: fragmentosMundo2[11]
     },
     {
       id: 13,
@@ -506,14 +424,7 @@ export const world2: World = {
           maxMoves: 10
         }
       },
-      combinations: [
-        {
-          emoji: '🌊',
-          name: 'Onda Primordial',
-          points: 0,
-          description: 'Pequenas irregularidades que moldarão o cosmos'
-        }
-      ]
+      fragmentoConhecimento: fragmentosMundo2[12]
     },
     {
       id: 14,
@@ -545,14 +456,7 @@ export const world2: World = {
           maxMoves: 10
         }
       },
-      combinations: [
-        {
-          emoji: '🌐',
-          name: 'Curvatura Espacial',
-          points: 0,
-          description: 'O espaço-tempo moldado pela matéria e energia'
-        }
-      ]
+      fragmentoConhecimento: fragmentosMundo2[13]
     },
     {
       id: 15,
@@ -584,14 +488,7 @@ export const world2: World = {
           maxMoves: 10
         }
       },
-      combinations: [
-        {
-          emoji: '⚔️',
-          name: 'Batalha Cósmica',
-          points: 0,
-          description: 'Matéria e radiação disputando o rumo do universo'
-        }
-      ]
+      fragmentoConhecimento: fragmentosMundo2[14]
     },
     {
       id: 16,
@@ -623,14 +520,7 @@ export const world2: World = {
           maxMoves: 10
         }
       },
-      combinations: [
-        {
-          emoji: '🌊⚛️',
-          name: 'Ponte para a Matéria',
-          points: 0,
-          description: 'A passagem da era dominada pela radiação à era dominada pela matéria'
-        }
-      ]
+      fragmentoConhecimento: fragmentosMundo2[15]
     },
     {
       id: 17,
@@ -662,14 +552,7 @@ export const world2: World = {
           maxMoves: 10
         }
       },
-      combinations: [
-        {
-          emoji: '🌗',
-          name: 'Vínculo Neutro',
-          points: 0,
-          description: 'A redução da interação entre matéria e luz'
-        }
-      ]
+      fragmentoConhecimento: fragmentosMundo2[16]
     },
     {
       id: 18,
@@ -701,14 +584,7 @@ export const world2: World = {
           maxMoves: 10
         }
       },
-      combinations: [
-        {
-          emoji: '🛠️',
-          name: 'Ferramenta Cósmica',
-          points: 0,
-          description: 'Preparando o universo para a formação de átomos neutros'
-        }
-      ]
+      fragmentoConhecimento: fragmentosMundo2[17]
     },
     {
       id: 19,
@@ -740,14 +616,7 @@ export const world2: World = {
           maxMoves: 10
         }
       },
-      combinations: [
-        {
-          emoji: '💎',
-          name: 'Nível Energético',
-          points: 0,
-          description: 'A estabilidade eletrônica que permite a existência de átomos'
-        }
-      ]
+      fragmentoConhecimento: fragmentosMundo2[18]
     },
     {
       id: 20,
@@ -779,14 +648,7 @@ export const world2: World = {
           maxMoves: 10
         }
       },
-      combinations: [
-        {
-          emoji: '⏳💫',
-          name: 'Porta da Claridade',
-          points: 0,
-          description: 'A transição para a era da transparência cósmica'
-        }
-      ]
+      fragmentoConhecimento: fragmentosMundo2[19]
     }
   ]
 }

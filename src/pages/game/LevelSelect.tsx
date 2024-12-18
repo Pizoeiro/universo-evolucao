@@ -1,10 +1,10 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, Fragment } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import useStore from '../../store/gameStore'
 import { worldLevels } from '../../data/levels'
 import { Level } from '../../types/game'
 import { motion, AnimatePresence } from 'framer-motion'
-import { FaLock, FaTrophy, FaPlay, FaBook, FaChevronLeft, FaChevronRight, FaStar } from 'react-icons/fa'
+import { FaLock, FaTrophy, FaPlay, FaBook, FaChevronLeft, FaChevronRight, FaStar, FaAtom } from 'react-icons/fa'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { Navigation, FreeMode, Mousewheel, Virtual } from 'swiper/modules'
 import 'swiper/css'
@@ -32,14 +32,11 @@ const ExtremeLevelCard: React.FC<ExtremeLevelCardProps> = ({
   progress
 }) => {
   const stars = progress?.score || 0;
-  const [showStory, setShowStory] = useState(false);
 
-  const handleStoryClick = () => {
-    setShowStory(true);
-  };
-
-  const handleCloseStory = () => {
-    setShowStory(false);
+  // Função para pegar o emoji objetivo da fase
+  const getLevelEmoji = (level: Level) => {
+    const starObjective = level.starObjectives.one; // Pegamos o primeiro objetivo
+    return starObjective.emoji;
   };
 
   const cardVariants = {
@@ -49,74 +46,95 @@ const ExtremeLevelCard: React.FC<ExtremeLevelCardProps> = ({
   };
 
   return (
-    <>
-      <MotionLevelCard
-        className={`level-card extreme-level-card ${!isUnlocked ? 'locked' : ''}`}
-        variants={cardVariants}
-        initial="hidden"
-        animate="visible"
-        exit="exit"
-        whileHover={{ scale: 1.02 }}
-        whileTap={{ scale: 0.98 }}
-      >
-        <div className="level-content">
-          <div className="level-header">
-            <span className="level-icon">{level.icon}</span>
+    <MotionLevelCard
+      className={`extreme-level-card ${!isUnlocked ? 'locked' : ''}`}
+      variants={cardVariants}
+      initial="hidden"
+      animate="visible"
+      exit="exit"
+      whileHover={isUnlocked ? { scale: 1.02 } : {}}
+      whileTap={isUnlocked ? { scale: 0.98 } : {}}
+    >
+      <div className="level-content">
+        <div className="level-header">
+          <div className="level-icon">
+            {isUnlocked ? getLevelEmoji(level) : <FaLock />}
+          </div>
+          <div className="level-info">
+            <div className="level-number">Nível {level.id}</div>
             <h3 className="level-name">{level.name}</h3>
           </div>
-          <p className="level-description">{level.description}</p>
+        </div>
+
+        <p className="level-description">{level.description}</p>
+
+        <div className="level-footer">
+          <div className="stars-row">
+            {[1, 2, 3].map((star) => (
+              <FaStar
+                key={star}
+                className={`star-icon ${star <= stars ? 'earned' : ''}`}
+              />
+            ))}
+          </div>
+
           <div className="level-actions">
-            <button
-              className="story-button"
-              onClick={handleStoryClick}
-              aria-label="Ver história do nível"
-            >
-              <FaBook /> História
-            </button>
             {isUnlocked ? (
               <button
-                className="level-button"
+                className="level-button play-button"
                 onClick={() => onPlay(level)}
-                aria-label={`Jogar nível ${level.id}`}
+                aria-label={`Jogar nível extremo ${level.id}`}
               >
-                <FaPlay /> Jogar
+                <FaPlay /> JOGAR
               </button>
             ) : (
-              <button className="level-button" disabled>
-                <FaLock /> Bloqueado
+              <button 
+                className="level-button play-button" 
+                disabled
+                aria-label="Nível bloqueado"
+              >
+                <FaLock /> BLOQUEADO
               </button>
             )}
           </div>
-          <div className="level-footer">
-            <div className="stars-row">
-              {[1, 2, 3].map((star) => (
-                <FaStar
-                  key={star}
-                  className={`star-icon ${star <= stars ? 'earned' : ''}`}
-                />
-              ))}
-            </div>
-          </div>
         </div>
-      </MotionLevelCard>
+      </div>
+    </MotionLevelCard>
+  );
+};
 
-      <AnimatePresence>
-        {showStory && (
-          <motion.div
-            className="story-modal"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-          >
-            <div className="story-content">
-              <h3>{level.name}</h3>
-              <p>{level.story}</p>
-              <button onClick={handleCloseStory}>Fechar</button>
-            </div>
-          </motion.div>
+const FragmentoConhecimento: React.FC<{ 
+  fragmento: { titulo: string, conteudo: string },
+  isUnlocked: boolean
+}> = ({ fragmento, isUnlocked }) => {
+  return (
+    <motion.div 
+      className="fragmento-conhecimento"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+    >
+      <motion.div 
+        className={`fragmento-conteudo ${!isUnlocked ? 'locked' : ''}`}
+        whileHover={isUnlocked ? { scale: 1.15 } : {}}
+        whileTap={isUnlocked ? { scale: 0.95 } : {}}
+      >
+        {isUnlocked ? (
+          <FaAtom className="fragmento-icone" />
+        ) : (
+          <FaLock className="fragmento-icone locked" />
         )}
-      </AnimatePresence>
-    </>
+        <h4 className="fragmento-titulo">{fragmento.titulo}</h4>
+        <p className="fragmento-texto">{fragmento.conteudo}</p>
+      </motion.div>
+      
+      {isUnlocked && (
+        <div className="fragmento-popup">
+          <h4 className="fragmento-titulo">{fragmento.titulo}</h4>
+          <p className="fragmento-texto">{fragmento.conteudo}</p>
+        </div>
+      )}
+    </motion.div>
   );
 };
 
@@ -459,6 +477,20 @@ export default function LevelSelect() {
     );
   };
 
+  const renderMatchLevelCards = () => {
+    return currentWorld.levels.map((level, index) => (
+      <Fragment key={level.id}>
+        {renderMatchLevelCard(level)}
+        {level.fragmentoConhecimento && (
+          <FragmentoConhecimento 
+            fragmento={level.fragmentoConhecimento} 
+            isUnlocked={isLevelUnlocked(level)}
+          />
+        )}
+      </Fragment>
+    ));
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -621,9 +653,7 @@ export default function LevelSelect() {
           onMouseUp={handleMouseUp}
           onMouseLeave={handleMouseUp}
         >
-          {currentWorld.levels.map((level) => (
-            renderMatchLevelCard(level)
-          ))}
+          {renderMatchLevelCards()}
         </div>
 
         <MotionCarouselButton
@@ -696,9 +726,38 @@ export default function LevelSelect() {
               </Swiper>
             </div>
           ) : (
-            <div className="extreme-mode-lock-message">
-              Complete os níveis do modo normal com pelo menos 2 estrelas para desbloquear o modo extremo!
-            </div>
+            <motion.div 
+              className="extreme-mode-lock-message"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+            >
+              <div className="extreme-mode-lock-content">
+                <FaLock className="extreme-mode-lock-icon" />
+                <h3 className="extreme-mode-lock-title">Modo Extremo Bloqueado</h3>
+                <p className="extreme-mode-lock-description">
+                  Complete os níveis do modo normal com pelo menos 2 estrelas para desbloquear 
+                  desafios ainda mais intensos no Modo Extremo!
+                </p>
+                
+                {/* Barra de Progresso */}
+                <div className="extreme-mode-progress">
+                  <div className="extreme-mode-progress-bar">
+                    <motion.div 
+                      className="extreme-mode-progress-fill"
+                      initial={{ width: 0 }}
+                      animate={{ 
+                        width: `${(worldStats.totalStars / (worldStats.totalLevels * 2)) * 100}%` 
+                      }}
+                      transition={{ duration: 1, delay: 0.5 }}
+                    />
+                  </div>
+                  <span className="extreme-mode-progress-text">
+                    {worldStats.totalStars}/{worldStats.totalLevels * 2} estrelas
+                  </span>
+                </div>
+              </div>
+            </motion.div>
           )}
         </div>
       )}

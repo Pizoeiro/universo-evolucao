@@ -1,4 +1,5 @@
 import { World } from './types'
+import { fragmentosMundo1 } from '../FragmentosConhecimento/mundo1'
 
 export const world1: World = {
   name: 'O Grande Início',
@@ -45,7 +46,8 @@ export const world1: World = {
           points: 0,
           description: 'O ponto inicial de toda a existência'
         }
-      ]
+      ],
+      fragmentoConhecimento: fragmentosMundo1[0],
     },
     {
       id: 2,
@@ -84,7 +86,8 @@ export const world1: World = {
           points: 0,
           description: 'A explosão que deu início a tudo'
         }
-      ]
+      ],
+      fragmentoConhecimento: fragmentosMundo1[1],
     },
     {
       id: 3,
@@ -123,7 +126,8 @@ export const world1: World = {
           points: 0,
           description: 'A receita inicial do universo'
         }
-      ]
+      ],
+      fragmentoConhecimento: fragmentosMundo1[2],
     },
     {
       id: 4,
@@ -162,7 +166,8 @@ export const world1: World = {
           points: 0,
           description: 'A expansão exponencial do universo'
         }
-      ]
+      ],
+      fragmentoConhecimento: fragmentosMundo1[3],
     },
     {
       id: 5,
@@ -201,7 +206,8 @@ export const world1: World = {
           points: 0,
           description: 'A força comprimida do universo inicial'
         }
-      ]
+      ],
+      fragmentoConhecimento: fragmentosMundo1[4],
     },
     {
       id: 6,
@@ -240,7 +246,8 @@ export const world1: World = {
           points: 0,
           description: 'A mistura inicial de partículas do universo'
         }
-      ]
+      ],
+      fragmentoConhecimento: fragmentosMundo1[5],
     },
     {
       id: 7,
@@ -279,7 +286,8 @@ export const world1: World = {
           points: 0,
           description: 'Liberação intensa de luz no universo jovem'
         }
-      ]
+      ],
+      fragmentoConhecimento: fragmentosMundo1[6],
     },
     {
       id: 8,
@@ -318,7 +326,8 @@ export const world1: World = {
           points: 0,
           description: 'As ondas de energia que se propagam no universo inicial'
         }
-      ]
+      ],
+      fragmentoConhecimento: fragmentosMundo1[7],
     },
     {
       id: 9,
@@ -357,7 +366,8 @@ export const world1: World = {
           points: 0,
           description: 'Regiões concentradas de energia no universo jovem'
         }
-      ]
+      ],
+      fragmentoConhecimento: fragmentosMundo1[8],
     },
     {
       id: 10,
@@ -396,7 +406,8 @@ export const world1: World = {
           points: 0,
           description: 'O movimento caótico que molda o universo inicial'
         }
-      ]
+      ],
+      fragmentoConhecimento: fragmentosMundo1[9],
     },
     {
       id: 11,
@@ -408,7 +419,7 @@ export const world1: World = {
       starObjectives: {
         one: {
           description: 'Crie 3 misturas energéticas',
-          emoji: '🔄',
+          emoji: '����',
           requiredMatches: 3,
           points: 0,
           maxMoves: 15
@@ -435,7 +446,8 @@ export const world1: World = {
           points: 0,
           description: 'A combinação de diferentes formas de energia'
         }
-      ]
+      ],
+      fragmentoConhecimento: fragmentosMundo1[10],
     },
     {
       id: 12,
@@ -474,7 +486,8 @@ export const world1: World = {
           points: 0,
           description: 'Energia em constante ebulição no universo inicial'
         }
-      ]
+      ],
+      fragmentoConhecimento: fragmentosMundo1[11],
     },
     {
       id: 13,
@@ -513,7 +526,8 @@ export const world1: World = {
           points: 0,
           description: 'O movimento constante das partículas subatômicas'
         }
-      ]
+      ],
+      fragmentoConhecimento: fragmentosMundo1[12],
     },
     {
       id: 14,
@@ -552,7 +566,8 @@ export const world1: World = {
           points: 0,
           description: 'Caos energético no universo jovem'
         }
-      ]
+      ],
+      fragmentoConhecimento: fragmentosMundo1[13],
     },
     {
       id: 15,
@@ -591,7 +606,8 @@ export const world1: World = {
           points: 0,
           description: 'O vórtice de energia que molda o universo'
         }
-      ]
+      ],
+      fragmentoConhecimento: fragmentosMundo1[14],
     },
     {
       id: 16,
@@ -630,7 +646,8 @@ export const world1: World = {
           points: 0,
           description: 'Reação em cadeia de explosões no universo'
         }
-      ]
+      ],
+      fragmentoConhecimento: fragmentosMundo1[15],
     },
     {
       id: 17,
@@ -669,7 +686,8 @@ export const world1: World = {
           points: 0,
           description: 'Erupções massivas de energia no universo inicial'
         }
-      ]
+      ],
+      fragmentoConhecimento: fragmentosMundo1[16],
     },
     {
       id: 18,
@@ -708,7 +726,8 @@ export const world1: World = {
           points: 0,
           description: 'Ondas massivas de energia no universo inicial'
         }
-      ]
+      ],
+      fragmentoConhecimento: fragmentosMundo1[17],
     },
     {
       id: 19,
@@ -747,7 +766,8 @@ export const world1: World = {
           points: 0,
           description: 'Turbulências intensas de energia no universo inicial'
         }
-      ]
+      ],
+      fragmentoConhecimento: fragmentosMundo1[18],
     },
     {
       id: 20,
@@ -786,7 +806,52 @@ export const world1: World = {
           points: 0,
           description: 'A passagem para a próxima era cósmica'
         }
-      ]
+      ],
+      fragmentoConhecimento: fragmentosMundo1[19],
+    },
+    {
+      id: 21,
+      name: 'A Grande Síntese',
+      description: 'O momento crucial onde todas as forças e elementos do universo primordial se unem em uma sinfonia cósmica',
+      story: 'Este é o momento de síntese, onde todos os elementos da era do Big Bang convergem. As forças fundamentais estabeleceram seus domínios, a matéria encontrou suas formas básicas, e o universo está pronto para sua próxima grande transformação. É hora de harmonizar todos os aspectos do cosmos primordial em uma grande sinfonia universal.',
+      icon: '🌌✨',
+      magicaCosmicaCount: 3, // Mais usos da Mágica Cósmica para esta fase especial
+      gridSize: 8, // Grid maior para este nível especial
+      starObjectives: {
+        one: {
+          description: 'Combine 3 elementos primordiais diferentes',
+          emoji: '🌌✨',
+          requiredMatches: 3,
+          points: 0,
+          maxMoves: 20
+        },
+        two: {
+          description: 'Crie uma reação em cadeia de 5 combinações',
+          emoji: '🌌✨',
+          requiredMatches: 5,
+          points: 0,
+          maxMoves: 15
+        },
+        three: {
+          description: 'Harmonize todos os elementos em uma única jogada',
+          emoji: '🌌✨',
+          requiredMatches: 7,
+          points: 0,
+          maxMoves: 10
+        }
+      },
+      // Características especiais para a fase final
+      specialFeatures: {
+        chainReactions: true, // Permite reações em cadeia
+        multiMatch: true, // Permite combinar diferentes tipos de elementos
+        cosmicResonance: true, // Novo efeito especial para a fase final
+        finalSynthesis: true // Mecânica especial de conclusão
+      },
+      unlockMessage: "Parabéns! Você dominou os segredos do Big Bang e está pronto para explorar a próxima era do universo!",
+      fragmentoConhecimento: {
+        titulo: "A Sinfonia do Universo Primordial",
+        conteudo: "No final da era do Big Bang, todas as forças e elementos fundamentais encontraram seu lugar no cosmos. Esta harmonia cósmica estabeleceu as bases para tudo o que viria depois, como uma grande sinfonia onde cada elemento toca sua parte na música do universo."
+      }
     }
   ]
 }

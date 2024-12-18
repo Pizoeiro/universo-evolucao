@@ -8,16 +8,17 @@ import { gameService } from '../../config/firebase';
 import { User as GameUser } from '../../types/game';
 import useSound from 'use-sound';
 import { gameSounds } from '../../config/sounds';
+import StarBackground from './StarBackground';
 
 // Constantes para valores mágicos
-const ANIMATION_DELAY = 200; // Delay de animação
+const ANIMATION_DELAY = 150; // Reduzido de 250 para 150ms
 const SPECIAL_EMOJI_CHANCE = 0.1;
 const MIN_OBJECTIVE_EMOJIS = 3;
 const COSMIC_MAGIC_PERCENTAGE = 0.5;
 
-// Emojis base para cada mundo
+// Emojis base para cada mundo (modo normal)
 const worldEmojis = {
-  1: ['⚛️', '⚡', '✨', '💥', '🌠', '🌌', '🌟', '💫', '🌊', '🌑', '🕳️'],
+  1: ['⚛️', '⚡', '✨', '💥', '🌠', '🌌'],
   2: ['💫', '🌑', '🌍', '☀️', '🌌', '🪐'],
   3: ['⚗️', '🧬', '🧪', '🫧', '🦠', '🔬'],
   4: ['🔗', '🧬', '🧴', '🏭', '♻️', '🧪'],
@@ -29,7 +30,18 @@ const worldEmojis = {
   10: ['🦐', '🐚', '🌱', '🦑', '🐟', '🍄'],
 };
 
+// Emojis para o modo extremo
+const extremeWorldEmojis = {
+  1: ['🌀', '💥', '🎯', '✨', '☀️', '⚡', '🔮', '🌟', '🌐', '🌌', '💎', '🌑', '🎆', '🔆', '💫'],
+};
+
 const getWorldEmojis = (worldId: number): string[] => {
+  // Se for um mundo extremo
+  if (worldId.toString().includes('extreme')) {
+    const baseWorldId = parseInt(worldId.toString().replace('-extreme', ''));
+    return extremeWorldEmojis[baseWorldId as keyof typeof extremeWorldEmojis] || extremeWorldEmojis[1];
+  }
+  // Se for um mundo normal
   return worldEmojis[worldId as keyof typeof worldEmojis] || worldEmojis[1];
 };
 
@@ -504,15 +516,16 @@ const GameBoard = () => {
     
         const matches = findMatches(tempGrid);
         
-        if (matches.length > 0) {
+        // Só atualiza possibleMatches se for uma verificação iniciada pelo usuário
+        // (quando há uma peça selecionada)
+        if (selectedTile !== null) {
             const newPossibleMatches: Position[] = [
                 { row: row1, col: col1 },
                 { row: row2, col: col2 }
             ];
             setPossibleMatches(newPossibleMatches);
-            return true;
         }
-        return false;
+        return matches.length > 0;
     };
     
     const handleTileClick = (row: number, col: number) => {
@@ -772,48 +785,77 @@ const GameBoard = () => {
       return workingGrid;
     };
     
-    const handleFall = async (inputGrid: Tile[][]): Promise<Tile[][]> => {
-      let workingGrid = inputGrid.map(r => r.map(tile => ({ ...tile })));
-      let hasChanges = false;
+    // Modificar a constante para ser uma função que retorna o delay baseado no tamanho do grid
+    const getAnimationDelay = (gridSize: number): number => {
+        // Base delay é 150ms para grid 8x8
+        // Reduz proporcionalmente conforme o grid aumenta
+        const baseDelay = 150;
+        const factor = 8 / gridSize; // 8 é o tamanho mínimo do grid
+        return Math.max(50, Math.floor(baseDelay * factor)); // Mínimo de 50ms
+    };
 
-        // 1. Aplicar gravidade
-        for (let col = 0; col < GRID_SIZE; col++) {
-            let emptySpaces = [];
-            for (let row = GRID_SIZE - 1; row >= 0; row--) {
-              if (workingGrid[row][col].emoji === '') {
-                emptySpaces.push(row);
-              }
-            }
-      
-            for (let emptyRow of emptySpaces) {
-              let sourceRow = emptyRow - 1;
-              while (sourceRow >= 0 && workingGrid[sourceRow][col].emoji === '') {
-                sourceRow--;
-              }
-      
-                if (sourceRow >= 0) {
-                    workingGrid[emptyRow][col] = {
-                        ...workingGrid[sourceRow][col],
-                        id: generateUniqueId(emptyRow, col),
-                        fall: true
-                    };
-                    workingGrid[sourceRow][col] = {
-                        id: generateUniqueId(sourceRow, col),
-                        emoji: '',
-                        isSelected: false,
-                        isMatched: false,
-                        fall: false
-                    };
-                    hasChanges = true;
+    const handleFall = async (inputGrid: Tile[][]): Promise<Tile[][]> => {
+        let workingGrid = inputGrid.map(r => r.map(tile => ({ ...tile })));
+        let hasChanges = false;
+        let continueFalling = true;
+
+        // Calcular o delay baseado no tamanho atual do grid
+        const currentDelay = getAnimationDelay(GRID_SIZE);
+        // Ajustar delays secundários proporcionalmente
+        const lineDelay = Math.max(5, Math.floor(currentDelay * 0.1)); // 10% do delay principal
+        const newEmojiDelay = Math.max(10, Math.floor(currentDelay * 0.2)); // 20% do delay principal
+
+        while (continueFalling) {
+            continueFalling = false;
+
+            for (let col = 0; col < GRID_SIZE; col++) {
+                for (let row = GRID_SIZE - 1; row >= 0; row--) {
+                    if (workingGrid[row][col].emoji === '') {
+                        let filledRow = row - 1;
+                        while (filledRow >= 0) {
+                            if (workingGrid[filledRow][col].emoji !== '') {
+                                // Mover o emoji para baixo
+                                workingGrid[row][col] = {
+                                    ...workingGrid[filledRow][col],
+                                    id: generateUniqueId(row, col),
+                                    fall: true
+                                };
+                                workingGrid[filledRow][col] = {
+                                    id: generateUniqueId(filledRow, col),
+                                    emoji: '',
+                                    isSelected: false,
+                                    isMatched: false
+                                };
+                                hasChanges = true;
+                                continueFalling = true;
+
+                                setGrid([...workingGrid]);
+                                await new Promise(resolve => setTimeout(resolve, currentDelay));
+                                break;
+                            }
+                            filledRow--;
+                        }
+                    }
+                }
+                if (hasChanges) {
+                    await new Promise(resolve => setTimeout(resolve, lineDelay));
                 }
             }
+        }
 
-            // Preencher espaços vazios no topo
+        // Preencher os espaços vazios com novos emojis
+        for (let col = 0; col < GRID_SIZE; col++) {
             for (let row = 0; row < GRID_SIZE; row++) {
                 if (workingGrid[row][col].emoji === '') {
-                    const emoji = getWorldEmojis(Number(worldId) || 1)[
-                        Math.floor(Math.random() * getWorldEmojis(Number(worldId) || 1).length)
-                    ];
+                    // Usar getRandomEmoji ao invés de escolher diretamente do worldEmojis
+                    const emoji = getRandomEmoji(
+                        workingGrid,
+                        workingGrid[row],
+                        row,
+                        col,
+                        objectives[0]?.emojis || [],
+                        []
+                    );
                     workingGrid[row][col] = {
                         id: generateUniqueId(row, col),
                         emoji,
@@ -823,25 +865,20 @@ const GameBoard = () => {
                         isNew: true
                     };
                     hasChanges = true;
+                    setGrid([...workingGrid]);
+                    await new Promise(resolve => setTimeout(resolve, newEmojiDelay));
                 }
             }
         }
-        
-        if (hasChanges) {
-            setGrid(workingGrid);
-            await new Promise(resolve => setTimeout(resolve, ANIMATION_DELAY));
-      
-        // Remover animações
-            workingGrid = workingGrid.map((row: Tile[], i: number) =>
-                row.map((tile: Tile, j: number) => ({
-                    ...tile,
-                    id: generateUniqueId(i, j),
-                    fall: false,
-                    isNew: false
-                }))
-            );
-        }
-        
+
+        workingGrid = workingGrid.map(row =>
+            row.map(tile => ({
+                ...tile,
+                fall: false,
+                isNew: false
+            }))
+        );
+
         return workingGrid;
     };
     
@@ -876,36 +913,36 @@ const GameBoard = () => {
             // Refill the exploded positions with new emojis after animation
             for (let radius = 0; radius <= maxRadius; radius++) {
                 for (let dx = -radius; dx <= radius; dx++) {
-                for (let dy = -radius; dy <= radius; dy++) {
-                    if (Math.abs(dx) + Math.abs(dy) > radius) continue; // Forma de diamante
+                    for (let dy = -radius; dy <= radius; dy++) {
+                        if (Math.abs(dx) + Math.abs(dy) > radius) continue; // Forma de diamante
     
-                    const newRow = row + dx;
-                    const newCol = col + dy;
+                        const newRow = row + dx;
+                        const newCol = col + dy;
     
-                    if (newRow >= 0 && newRow < GRID_SIZE && newCol >= 0 && newCol < GRID_SIZE) {
-                        // Priorizar emojis objetivos se disponíveis
-                        const currentObjectiveEmojis = objectives[0]?.emojis || [];
-                        const emoji = getRandomEmoji(
-                            workingGrid,
-                            workingGrid[newRow],
-                            newRow,
-                            newCol,
-                            currentObjectiveEmojis,
-                            [] // Sem emojis para evitar
-                        );
+                        if (newRow >= 0 && newRow < GRID_SIZE && newCol >= 0 && newCol < GRID_SIZE) {
+                            // Priorizar emojis objetivos se disponíveis
+                            const currentObjectiveEmojis = objectives[0]?.emojis || [];
+                            const emoji = getRandomEmoji(
+                                workingGrid,
+                                workingGrid[newRow],
+                                newRow,
+                                newCol,
+                                currentObjectiveEmojis,
+                                [] // Sem emojis para evitar
+                            );
     
-                        workingGrid[newRow][newCol] = {
-                            id: generateUniqueId(newRow, newCol),
-                            emoji,
-                            isSelected: false,
-                            isMatched: false,
-                            fall: true,
-                            isNew: true
-                        };
+                            workingGrid[newRow][newCol] = {
+                                id: generateUniqueId(newRow, newCol),
+                                emoji,
+                                isSelected: false,
+                                isMatched: false,
+                                fall: true,
+                                isNew: true
+                            };
+                        }
                     }
                 }
             }
-        }
     
             setGrid([...workingGrid]);
         };
@@ -924,16 +961,6 @@ const GameBoard = () => {
         // Atualizar o número de estrelas
         const newStars = currentStar;
         setStars(newStars);
-        setStarAnimation(currentStar);
-        
-        // Se completou todas as estrelas
-        if (currentStar === 3) {
-          setTimeout(() => handleGameOver(true), 1000);
-          return;
-        }
-    
-        // Mostrar tela de resultados
-        setShowResults(true);
         
         try {
           // Salvar o progresso atual
@@ -959,7 +986,18 @@ const GameBoard = () => {
         } catch (error) {
           console.error('Erro ao atualizar progresso:', error);
         }
-      };
+        
+        // Mostrar tela de resultados primeiro
+        setShowResults(true);
+        // Adicionar animação da estrela após um pequeno delay
+        setTimeout(() => setStarAnimation(currentStar), 300);
+        
+        // Se completou todas as estrelas
+        if (currentStar === 3) {
+          setTimeout(() => handleGameOver(true), 1000);
+          return;
+        }
+    };
     
       // Nova função para lidar com a transição para o próximo objetivo
     const handleContinueToNextStar = () => {
@@ -1001,7 +1039,9 @@ const GameBoard = () => {
         setGameOver(true);
         setShowResults(true);
         
-        if (allObjectivesMet && user && worldId && levelId) {
+        // Se o jogo acabou por tempo/movimentos e não por completar o objetivo,
+        // ou se não é a terceira estrela, tentamos salvar o progresso
+        if (allObjectivesMet && user && worldId && levelId && currentStar < 3) {
             const currentStarLevel: StarLevel = (['one', 'two', 'three'][currentStar - 1]) as StarLevel;
             const starObjectiveConfig = currentLevel?.starObjectives[currentStarLevel];
             
@@ -1080,7 +1120,7 @@ const GameBoard = () => {
         setIsProcessing(true);
     
         // Criar uma cópia do grid atual
-        const newGrid = grid.map(row => [...row]);
+        const newGrid = grid.map(row => row.map(tile => ({ ...tile })));
         const targetEmoji = objectives[0].emojis[0];
         const totalCells = GRID_SIZE * GRID_SIZE;
         const cellsToChange = Math.floor(totalCells * COSMIC_MAGIC_PERCENTAGE); // 50% do tabuleiro
@@ -1153,30 +1193,32 @@ const GameBoard = () => {
         const isPossibleMatch = possibleMatches.some(pos => pos.row === row && pos.col === col);
         const isSpecial = tile.emoji === currentWorld?.specialEmoji;
     
+        // Ajustar as classes para a nova orientação
         const classes = [
-        'tile',
-        isSelected && 'selected',
-        tile.shake && 'shake',
-        tile.fall && 'fall',
-        tile.pop && 'pop',
-        tile.isMatched && 'match',
-        isPossibleMatch && 'possible-match',
-        tile.isNew && 'new',
-        isSpecial && 'special-emoji',
+            'tile',
+            isSelected && 'selected',
+            tile.shake && 'shake',
+            tile.fall && 'fall', // Ajuste para a nova direção de queda
+            tile.pop && 'pop',
+            tile.isMatched && 'match',
+            isPossibleMatch && 'possible-match',
+            tile.isNew && 'new',
+            isSpecial && 'special-emoji',
         ].filter(Boolean).join(' ');
     
         return (
-        <div
-            key={`${row}-${col}`}
-            className={classes}
-            onClick={() => onClick(row, col)}
-            role="button"
-            tabIndex={0}
-            data-testid={`tile-${row}-${col}`}
-            data-special={isSpecial}
-        >
-            {tile.emoji}
-        </div>
+            <div
+                key={`${col}-${row}`} // Ajustar a chave para refletir a nova orientação
+                className={classes}
+                onClick={() => onClick(row, col)}
+                role="button"
+                tabIndex={0}
+                data-testid={`tile-${col}-${row}`} // Ajustar o data-testid
+                data-special={isSpecial}
+                data-grid-size={GRID_SIZE}
+            >
+                {tile.emoji}
+            </div>
         );
     };
     
@@ -1212,8 +1254,132 @@ const GameBoard = () => {
         setIsSoundEnabled(!isSoundEnabled);
     };
     
+    // Verificar se existem matches possíveis no grid atual
+    const checkForPossibleMatches = useCallback(() => {
+        for (let row = 0; row < GRID_SIZE; row++) {
+            for (let col = 0; col < GRID_SIZE; col++) {
+                // Verificar horizontalmente
+                if (col < GRID_SIZE - 1) {
+                    const tempGrid = grid.map(r => r.map(tile => ({ ...tile })));
+                    const temp = tempGrid[row][col].emoji;
+                    tempGrid[row][col].emoji = tempGrid[row][col + 1].emoji;
+                    tempGrid[row][col + 1].emoji = temp;
+                    if (findMatches(tempGrid).length > 0) {
+                        return true;
+                    }
+                }
+                // Verificar verticalmente
+                if (row < GRID_SIZE - 1) {
+                    const tempGrid = grid.map(r => r.map(tile => ({ ...tile })));
+                    const temp = tempGrid[row][col].emoji;
+                    tempGrid[row][col].emoji = tempGrid[row + 1][col].emoji;
+                    tempGrid[row + 1][col].emoji = temp;
+                    if (findMatches(tempGrid).length > 0) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }, [GRID_SIZE, grid, findMatches]);
+
+    // Função para embaralhar o grid quando não houver matches possíveis
+    const shuffleGrid = useCallback(async () => {
+        if (isProcessing || gameOver) return;
+        
+        setIsProcessing(true);
+        
+        let hasValidShuffle = false;
+        let maxAttempts = 5;
+        let newGrid = grid.map(row => row.map(tile => ({ ...tile })));
+
+        while (!hasValidShuffle && maxAttempts > 0) {
+            // Embaralha o grid
+            for (let i = newGrid.length - 1; i > 0; i--) {
+                for (let j = newGrid[i].length - 1; j > 0; j--) {
+                    const randRow = Math.floor(Math.random() * (i + 1));
+                    const randCol = Math.floor(Math.random() * (j + 1));
+                    
+                    const temp = newGrid[i][j].emoji;
+                    newGrid[i][j].emoji = newGrid[randRow][randCol].emoji;
+                    newGrid[randRow][randCol].emoji = temp;
+                }
+            }
+            
+            // Verifica se há matches possíveis após embaralhar
+            let hasPossibleMatch = false;
+            for (let row = 0; row < GRID_SIZE; row++) {
+                for (let col = 0; col < GRID_SIZE; col++) {
+                    if (col < GRID_SIZE - 1) {
+                        const tempGrid = newGrid.map(r => r.map(t => ({ ...t })));
+                        const temp = tempGrid[row][col].emoji;
+                        tempGrid[row][col].emoji = tempGrid[row][col + 1].emoji;
+                        tempGrid[row][col + 1].emoji = temp;
+                        if (findMatches(tempGrid).length > 0) {
+                            hasPossibleMatch = true;
+                            break;
+                        }
+                    }
+                    if (row < GRID_SIZE - 1) {
+                        const tempGrid = newGrid.map(r => r.map(t => ({ ...t })));
+                        const temp = tempGrid[row][col].emoji;
+                        tempGrid[row][col].emoji = tempGrid[row + 1][col].emoji;
+                        tempGrid[row + 1][col].emoji = temp;
+                        if (findMatches(tempGrid).length > 0) {
+                            hasPossibleMatch = true;
+                            break;
+                        }
+                    }
+                }
+                if (hasPossibleMatch) break;
+            }
+            
+            if (hasPossibleMatch) {
+                hasValidShuffle = true;
+            } else {
+                maxAttempts--;
+            }
+        }
+
+        // Só toca o som e anima se conseguiu um embaralhamento válido
+        if (hasValidShuffle) {
+            if (isSoundEnabled) playMagic();
+            
+            // Adiciona a classe shake em todos os tiles
+            const tiles = document.querySelectorAll('.tile');
+            tiles.forEach(tile => tile.classList.add('shake'));
+
+            // Remove a classe shake após a animação terminar
+            setTimeout(() => {
+                tiles.forEach(tile => tile.classList.remove('shake'));
+                setGrid(newGrid);
+                setIsProcessing(false);
+            }, 500);
+        } else {
+            // Se não conseguiu encontrar um embaralhamento válido após 5 tentativas
+            setIsProcessing(false);
+            console.warn('Não foi possível encontrar um embaralhamento válido após 5 tentativas');
+        }
+    }, [GRID_SIZE, gameOver, grid, isProcessing, isSoundEnabled, playMagic, findMatches]);
+
+    // Verificar automaticamente se há matches possíveis após cada movimento
+    useEffect(() => {
+        if (!isProcessing && !gameOver && grid.length > 0) {
+            const timer = setTimeout(() => {
+                const hasPossibleMatches = checkForPossibleMatches();
+                if (!hasPossibleMatches) {
+                    shuffleGrid();
+                }
+            }, 1000); // Aguardar 1 segundo após cada movimento
+            
+            return () => clearTimeout(timer);
+        }
+    }, [isProcessing, gameOver, grid, checkForPossibleMatches, shuffleGrid]);
+
     return (
         <div className="game-board">
+            <StarBackground />
+            
             <div 
               className={`game-container ${isExtreme ? 'extreme-mode' : ''}`}
               data-extreme={isExtreme}
@@ -1221,7 +1387,13 @@ const GameBoard = () => {
             <div className="info-section">
                 <div className="header-container">
                     <h1>{currentLevel?.name}</h1>
-                    <div className="extreme-badge">MODO EXTREMO</div>
+                    {isExtreme && (
+                      <div className="extreme-badge">
+                        <span>🔥</span>
+                        <span>Modo Extremo</span>
+                        <span>🔥</span>
+                      </div>
+                    )}
                     <p className="level-story">{currentLevel?.story}</p>
                     <div className="button-container">
                         {magicaCosmicaLeft > 0 && (
@@ -1235,13 +1407,12 @@ const GameBoard = () => {
                             </button>
                         )}
                         <button className="back-button" onClick={handleBack}>
-                            <span>↩</span>
-                            <span>Voltar</span>
+                            <span>VOLTAR</span>
                         </button>
                     </div>
                 </div>
 
-                {/* Adicionar o painel de pontos para modo extremo */}
+                {/* Painel de pontuação melhorado */}
                 {isExtreme && currentWorld && (
                     <div className="points-panel">
                         <div className="points-panel-header">
@@ -1254,7 +1425,6 @@ const GameBoard = () => {
                                     <div className="points-content">
                                         <span className="points-emoji">{combo.emoji}</span>
                                         <div className="points-info">
-                                            <span className="points-name">{combo.name}</span>
                                             <span className="points-value">{combo.points}</span>
                                         </div>
                                     </div>
@@ -1305,31 +1475,27 @@ const GameBoard = () => {
                 </div>
                 
                 <div className="moves-container">
-                    <div className="moves-info">
                     <div className="moves-count">
-                        <span className="moves-icon">🎯</span>
                         <span className="moves-number">{movesLeft}</span>
                         <span className="moves-label">movimentos</span>
-                    </div>
                     </div>
                 </div>
                 </div>
             </div>
     
-            <div 
-              className="grid-container" 
-              data-extreme={isExtreme}
-            >
+            <div className="grid-container">
                 <div 
                   className="grid"
                   data-size={GRID_SIZE}
+                  style={{
+                    gridTemplateColumns: `repeat(${GRID_SIZE}, 1fr)`,
+                    gridTemplateRows: `repeat(${GRID_SIZE}, 1fr)`
+                  }}
                 >
                 {grid.map((row, i) => (
-                    <div key={i} className="row">
-                    {row.map((tile, j) => (
-                        renderTile(tile, i, j)
-                    ))}
-                    </div>
+                    row.map((tile, j) => (
+                      renderTile(tile, i, j)
+                    ))
                 ))}
                 </div>
             </div>
@@ -1389,6 +1555,12 @@ const GameBoard = () => {
             <button 
                 className="sound-toggle"
                 onClick={toggleSound}
+                style={{
+                    position: 'fixed',
+                    bottom: '1rem',
+                    right: '1rem',
+                    zIndex: 1000
+                }}
             >
                 {isSoundEnabled ? '🔊' : '🔇'}
             </button>

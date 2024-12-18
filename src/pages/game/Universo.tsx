@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FaBrain, FaTrophy, FaUser, FaMedal, FaGlobe, FaCog, FaLightbulb, FaShieldAlt, FaWifi, FaRocket } from 'react-icons/fa';
+import { FaBrain, FaTrophy, FaUser, FaMedal, FaGlobe, FaCog, FaLightbulb, FaShieldAlt, FaWifi } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 import useStore from '../../store/gameStore';
 import { Terminal } from 'xterm';

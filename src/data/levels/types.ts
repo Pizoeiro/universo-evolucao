@@ -28,6 +28,10 @@ export interface Level {
   targetScore?: number
   unlockMessage?: string
   magicaCosmicaCount?: number // Número de vezes que a Mágica Cósmica pode ser usada no nível
+  fragmentoConhecimento?: {
+    titulo: string
+    conteudo: string
+  }
 }
 
 export interface World {
